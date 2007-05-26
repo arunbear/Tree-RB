@@ -1,4 +1,4 @@
-use Test::More tests => 26;
+use Test::More tests => 27;
 use strict;
 use warnings;
 
@@ -97,3 +97,6 @@ $left_node->right($egypt);
 #                  [Egypt: Cairo]
 
 is($parent_node->leaf->key, 'Egypt', 'leaf');
+
+$parent_node->strip;
+is($parent_node->leaf->key, 'Ireland', 'strip');
