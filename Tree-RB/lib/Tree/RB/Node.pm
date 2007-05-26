@@ -152,21 +152,7 @@ sub strip {
     }
 }
 
-sub DESTROY {
-    my $self = shift;
-    my $from = shift || '';
-    $from = " ,from $from" if $from;
-    #warn "Destroy: $self->[_KEY]$from";
-    if($self->[_PARENT]) {
-        #delete $self->[_PARENT];
-    }
-    foreach (_LEFT, _RIGHT) {
-        if($self->[$_]) {
-            #(delete $self->[$_])->DESTROY($self->[_KEY]);
-            delete $self->[$_];
-        }
-    }
-}
+sub DESTROY { $_[0]->strip; }
 
 1; # Magic true value required at end of module
 __END__
