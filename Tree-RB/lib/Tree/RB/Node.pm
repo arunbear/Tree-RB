@@ -124,6 +124,34 @@ sub as_lol2 {
     return $aref;
 }
 
+sub strip {
+    my $self = shift;
+    my $callback = shift;
+
+    my $x = $self;
+    while($x) {
+        my $leaf = $x->leaf;
+        if($callback) {
+            $callback->($leaf);
+        }
+        $x = $leaf->[_PARENT];
+
+        # detach $leaf from the (sub)tree
+        no warnings "uninitialized";
+        if($leaf == $x->[_LEFT]) {
+            undef $x->[_LEFT];
+        }
+        else {
+            undef $x->[_RIGHT];
+        }
+        undef $leaf->[_PARENT];
+
+        if(!$x->[_LEFT] && !$x->[_RIGHT]) {
+            $x = $x->[_PARENT];
+        }
+    }
+}
+
 sub DESTROY {
     my $self = shift;
     my $from = shift || '';
@@ -184,6 +212,12 @@ This document describes Tree::RB::Node version 0.0.1
 
 Returns the first leaf node found starting from this node, using a depth first,
 left to right search.
+
+=item C<< strip([$callback]) >>
+
+Strips off all nodes under this node. if a callback is specified,
+it will be called once for each node that is detached, with the detached
+node as its sole argument.
 
 =back
 
