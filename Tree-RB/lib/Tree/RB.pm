@@ -166,51 +166,6 @@ sub insert {
     $self->_insert_fixup($z);
 }
 
-sub insert2 {
-    my $self = shift;
-    my $key  = shift or croak('Missing arg: $key');
-    my $val  = shift or croak('Missing arg: $val');
-    my $cmp = $self->[CMP];
-    my $z = Tree::RB::Node->new($key => $val);
-
-    my $y;
-    my $x = $self->[ROOT];
-    while($x) {
-        $y = $x;
-        # Handle case of inserting node with duplicate key.
-        if($cmp ? $cmp->($z->[_KEY], $x->[_KEY]) == 0
-                : $z->[_KEY] eq $x->[_KEY])
-        {
-            my $val = $x->[_VAL];
-            $x->[_VAL] = $z->[_VAL];
-            return $val;
-        }
-        if($cmp ? $cmp->($z->[_KEY], $x->[_KEY]) < 0
-                : $z->[_KEY] lt $x->[_KEY])
-        {
-            $x = $x->[_LEFT];
-        }
-        else {
-            $x = $x->[_RIGHT];
-        }
-    }
-    $z->[_PARENT] = $y;
-    if(not defined $y) {
-        $self->[ROOT] = $z;
-    }
-    else {
-        if($cmp ? $cmp->($z->[_KEY], $y->[_KEY]) < 0
-                : $z->[_KEY] lt $y->[_KEY])
-        {
-            $y->[_LEFT] = $z;
-        }
-        else {
-            $y->[_RIGHT] = $z;
-        }
-    }
-    $self->_insert_fixup($z);
-}
-
 sub _insert_fixup {
     my $self = shift;
     my $x = shift or croak('Missing arg: node');
