@@ -59,6 +59,14 @@ sub max {
     return $self;
 }
 
+sub leaf {
+    my $self = shift;
+    while (my $any_child = $self->[_LEFT] || $self->[_RIGHT]) {
+        $self = $any_child;
+    }
+    return $self;
+}
+
 sub successor {
     my $self = shift;
     if ($self->[_RIGHT]) {
@@ -170,6 +178,14 @@ This document describes Tree::RB::Node version 0.0.1
     exported, or methods that may be called on objects belonging to the
     classes provided by the module.
 
+=over
+
+=item C<< leaf >>
+
+Returns the first leaf node found starting from this node, using a depth first,
+left to right search.
+
+=back
 
 =head1 DIAGNOSTICS
 
