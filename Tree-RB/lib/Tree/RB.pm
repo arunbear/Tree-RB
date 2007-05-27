@@ -88,7 +88,7 @@ sub max {
     return $self->[ROOT]->max;
 }
 
-sub find {
+sub lookup {
     my $self = shift;
     my $key  = shift or croak('Missing arg: $key');
     my $mode = shift || LUEQUAL;
