@@ -217,6 +217,55 @@ sub _insert_fixup {
     $self->[ROOT][_COLOR] = BLACK;
 }
 
+sub delete {
+    my $self = shift;
+    my $key_or_node = shift or croak('key or node required');
+    my $z = (ref $key_or_node eq 'Tree::RB::Node')
+              ? $key_or_node
+              : ($self->lookup($key_or_node))[1];
+    return unless $z;
+
+    my $y = ($z->[_LEFT] && $z->[_RIGHT])
+              ? $z->successor
+              : $z;
+    # splice out $y
+    my $x = $y->[_LEFT] || $y->[_RIGHT];
+    if(defined $x) {
+        $x->[_PARENT] = $y->[_PARENT];
+    }
+
+    if(defined $y->[_PARENT]) {
+        if($y == $y->[_PARENT][_LEFT]) {
+            $y->[_PARENT][_LEFT] = $x;
+        }
+        else {
+            $y->[_PARENT][_RIGHT] = $x;
+        }
+        #
+    }
+    else {
+        $self->[ROOT] = $x;
+    }
+
+    if($y != $z) {
+        # swap $z and $y data
+        foreach (_KEY, _VAL) {
+            my $tmp = $z->[$_];
+            $z->[$_] = $y->[$_];
+            $y->[$_] = $tmp;
+        }
+    }
+    delete @{$y}[_PARENT, _LEFT, _RIGHT];
+    if($y->[_COLOR] == BLACK) {
+        $self->_delete_fixup($x);
+    }
+    return $y;
+}
+
+sub _delete_fixup {
+    my $self = shift;
+}
+
 sub _left_rotate {
     my $self = shift;
     my $x = shift or croak('Missing arg: node');
