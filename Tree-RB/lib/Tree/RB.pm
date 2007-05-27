@@ -62,6 +62,18 @@ sub new {
 
 sub DESTROY { $_[0]->[ROOT]->DESTROY if $_[0]->[ROOT] }
 
+sub resort {
+    my $self = $_[0];
+    my $cmp  = $_[1];
+    ref $cmp eq 'CODE'
+      or croak sprintf(q[Arg of type coderef required; got %s], ref $cmp || 'undef');
+
+    my $new_tree = __PACKAGE__->new($cmp);
+    $self->[ROOT]->strip(sub { $new_tree->insert($_[0]) });
+    $new_tree->insert(delete $self->[ROOT]);
+    $_[0] = $new_tree;
+}
+
 sub root { $_[0]->[ROOT] }
 
 sub min {
@@ -122,24 +134,30 @@ sub find {
 
 sub insert {
     my $self = shift;
-    my $key  = shift or croak('Missing arg: $key');
-    my $val  = shift or croak('Missing arg: $val');
+    my $key_or_node = shift or croak('key or node required');
+    my $val = shift;
+    if(!$val && ref $key_or_node ne 'Tree::RB::Node') {
+        croak('value required');
+    }
     my $cmp = $self->[CMP];
+    my $z = (ref $key_or_node eq 'Tree::RB::Node')
+              ? $key_or_node
+              : Tree::RB::Node->new($key_or_node => $val);
 
     my $y;
     my $x = $self->[ROOT];
     while($x) {
         $y = $x;
         # Handle case of inserting node with duplicate key.
-        if($cmp ? $cmp->($key, $x->[_KEY]) == 0
-                : $key eq $x->[_KEY])
+        if($cmp ? $cmp->($z->[_KEY], $x->[_KEY]) == 0
+                : $z->[_KEY] eq $x->[_KEY])
         {
             my $old_val = $x->[_VAL];
-            $x->[_VAL] = $val;
+            $x->[_VAL] = $z->[_VAL];
             return $old_val;
         }
-        if($cmp ? $cmp->($key, $x->[_KEY]) < 0
-                : $key lt $x->[_KEY])
+        if($cmp ? $cmp->($z->[_KEY], $x->[_KEY]) < 0
+                : $z->[_KEY] lt $x->[_KEY])
         {
             $x = $x->[_LEFT];
         }
@@ -148,14 +166,13 @@ sub insert {
         }
     }
     # insert new node
-    my $z = Tree::RB::Node->new($key => $val);
     $z->[_PARENT] = $y;
     if(not defined $y) {
         $self->[ROOT] = $z;
     }
     else {
-        if($cmp ? $cmp->($key, $y->[_KEY]) < 0
-                : $key lt $y->[_KEY])
+        if($cmp ? $cmp->($z->[_KEY], $y->[_KEY]) < 0
+                : $z->[_KEY] lt $y->[_KEY])
         {
             $y->[_LEFT] = $z;
         }
