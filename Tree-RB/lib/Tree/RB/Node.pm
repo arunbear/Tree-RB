@@ -131,9 +131,6 @@ sub strip {
     my $x = $self;
     while($x) {
         my $leaf = $x->leaf;
-        if($callback) {
-            $callback->($leaf);
-        }
         $x = $leaf->[_PARENT];
 
         # detach $leaf from the (sub)tree
@@ -145,6 +142,9 @@ sub strip {
             undef $x->[_RIGHT];
         }
         undef $leaf->[_PARENT];
+        if($callback) {
+            $callback->($leaf);
+        }
 
         if(!$x->[_LEFT] && !$x->[_RIGHT]) {
             $x = $x->[_PARENT];
