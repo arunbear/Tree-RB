@@ -3,7 +3,7 @@ package Tree::RB::Node;
 use warnings;
 use strict;
 use Carp;
-use Tree::RB::Node::_Fields;
+use Tree::RB::Node::_Constants;
 
 use version; our $VERSION = qv('0.0.3');
 
@@ -105,22 +105,8 @@ sub as_lol {
          $node->[_RIGHT]
            ? $self->as_lol($node->[_RIGHT])
            : '*';
-    my $color = ($node->[_COLOR] ? 'R' : 'B');
+    my $color = ($node->[_COLOR] == RED ? 'R' : 'B');
     push @$aref, "$color:$node->[_KEY]";
-    return $aref;
-}
-
-sub as_lol2 {
-    my $self = shift;
-    my $node = shift || $self;
-    my $aref;
-    if($node->[_LEFT]) {
-        push @$aref, $self->as_lol($node->[_LEFT]);
-    }
-    if($node->[_RIGHT]) {
-        push @$aref, $self->as_lol($node->[_RIGHT]);
-    }
-    push @$aref, $node->[_KEY];
     return $aref;
 }
 
