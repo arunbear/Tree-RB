@@ -106,6 +106,7 @@ sub as_lol {
            ? $self->as_lol($node->[_RIGHT])
            : '*';
     my $color = ($node->[_COLOR] == RED ? 'R' : 'B');
+    no warnings 'uninitialized';
     push @$aref, "$color:$node->[_KEY]";
     return $aref;
 }
