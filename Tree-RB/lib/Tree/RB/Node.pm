@@ -5,6 +5,9 @@ use strict;
 use Carp;
 use Tree::RB::Node::_Constants;
 
+use Exporter 'import';
+our @EXPORT_OK = qw[set_color color_of parent_of left_of right_of];
+
 use version; our $VERSION = qv('0.0.3');
 
 my %attribute = (
@@ -140,6 +143,32 @@ sub strip {
 }
 
 sub DESTROY { $_[0]->strip; }
+
+# Null aware accessors to assist with rebalancings during insertion and deletion
+
+sub set_color {
+    my ($node, $color) = @_;
+    if($node) {
+        $node->[_COLOR] = $color || BLACK;
+    }
+}
+
+sub color_of {
+    defined $_[0] ? $_[0]->[_COLOR] : BLACK;
+}
+
+sub parent_of {
+    defined $_[0] ? $_[0]->[_PARENT] : undef;
+}
+
+sub left_of {
+    defined $_[0] ? $_[0]->[_LEFT] : undef;
+}
+
+sub right_of {
+    defined $_[0] ? $_[0]->[_RIGHT] : undef;
+}
+
 
 1; # Magic true value required at end of module
 __END__
