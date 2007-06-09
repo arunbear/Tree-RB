@@ -1,14 +1,15 @@
 package Tree::RB;
 
-#use warnings;
+use warnings;
 use strict;
 use Carp;
 
-use Tree::RB::Node;
-use Tree::RB::Node::_Fields;
+use Tree::RB::Node qw[set_color color_of parent_of left_of right_of];
+use Tree::RB::Node::_Constants;
 
-use version; our $VERSION = qv('0.0.3');
+our $VERSION = '0.1';
 
+use Data::Dumper;
 use constant {
     LUEQUAL => 0,
     LUGTEQ  => 1,
@@ -19,10 +20,9 @@ use constant {
     LUPREV  => 7,
 };
 use constant {
-    BLACK => 0,
-    RED   => 1,
     ROOT  => 0,
     CMP   => 1,
+    SIZE  => 2,
 };
 
 sub _mk_iter {
@@ -75,6 +75,7 @@ sub resort {
 }
 
 sub root { $_[0]->[ROOT] }
+sub size { $_[0]->[SIZE] }
 
 sub min {
     my $self = shift;
@@ -180,17 +181,18 @@ sub insert {
             $y->[_RIGHT] = $z;
         }
     }
-    $self->_insert_fixup($z);
+    $self->_fix_after_insertion($z);
+    $self->[SIZE]++;
 }
 
-sub _insert_fixup {
+sub _fix_after_insertion {
     my $self = shift;
     my $x = shift or croak('Missing arg: node');
 
     $x->[_COLOR] = RED;
     while($x != $self->[ROOT] && $x->[_PARENT][_COLOR] == RED) {
         my ($child, $rotate1, $rotate2);
-        if($x->[_PARENT] == $x->[_PARENT][_PARENT][_LEFT]) {
+        if(($x->[_PARENT] || 0) == ($x->[_PARENT][_PARENT][_LEFT] || 0)) {
             ($child, $rotate1, $rotate2) = (_RIGHT, '_left_rotate', '_right_rotate');
         }
         else {
@@ -205,7 +207,7 @@ sub _insert_fixup {
             $x = $x->[_PARENT][_PARENT];
         }
         else {
-            if($x == $x->[_PARENT][$child]) {
+            if($x == ($x->[_PARENT][$child] || 0)) {
                 $x = $x->[_PARENT];
                 $self->$rotate1($x);
             }
@@ -232,45 +234,99 @@ sub delete {
     my $x = $y->[_LEFT] || $y->[_RIGHT];
     if(defined $x) {
         $x->[_PARENT] = $y->[_PARENT];
-    }
-
-    if(defined $y->[_PARENT]) {
-        if($y == $y->[_PARENT][_LEFT]) {
+        if(! defined $y->[_PARENT]) {
+            $self->[ROOT] = $x;
+        }
+        elsif($y == $y->[_PARENT][_LEFT]) {
             $y->[_PARENT][_LEFT] = $x;
         }
         else {
             $y->[_PARENT][_RIGHT] = $x;
         }
-        #
-    }
-    else {
-        $self->[ROOT] = $x;
-    }
+        # Null out links so they are OK to use by _fix_after_deletion
+        delete @{$y}[_PARENT, _LEFT, _RIGHT];
 
-    if($y != $z) {
-        # swap $z and $y data
-        foreach (_KEY, _VAL) {
-            my $tmp = $z->[$_];
-            $z->[$_] = $y->[$_];
-            $y->[$_] = $tmp;
+        # Fix replacement
+        if($y->[_COLOR] == BLACK) {
+            $self->_fix_after_deletion($x);
         }
     }
-    delete @{$y}[_PARENT, _LEFT, _RIGHT];
-    if($y->[_COLOR] == BLACK) {
-        $self->_delete_fixup($x);
+    elsif(! defined $y->[_PARENT]) {
+        # return if we are the only node
+        delete $self->[ROOT];
     }
+    else {
+        # No children. Use self as phantom replacement and unlink
+        if($y->[_COLOR] == BLACK) {
+            $self->_fix_after_deletion($y);
+        }
+        if(defined $y->[_PARENT]) {
+            no warnings 'uninitialized';
+            if($y == $y->[_PARENT][_LEFT]) {
+                delete $y->[_PARENT][_LEFT];
+            }
+            elsif($y == $y->[_PARENT][_RIGHT]) {
+                delete $y->[_PARENT][_RIGHT];
+            }
+            delete $y->[_PARENT];
+        }
+    }
+    $self->[SIZE]--;
     return $y;
 }
 
-sub _delete_fixup {
+sub _fix_after_deletion {
     my $self = shift;
+    my $x = shift or croak('Missing arg: node');
+
+    while($x != $self->[ROOT] && color_of($x) == BLACK) {
+        my ($child1, $child2, $rotate1, $rotate2);
+        no warnings 'uninitialized';
+        if($x == left_of(parent_of($x))) {
+            ($child1,    $child2,   $rotate1,       $rotate2) =
+            (\&right_of, \&left_of, '_left_rotate', '_right_rotate');
+        }
+        else {
+            ($child1,   $child2,    $rotate1,        $rotate2) =
+            (\&left_of, \&right_of, '_right_rotate', '_left_rotate');
+        }
+        use warnings;
+
+        my $w = $child1->(parent_of($x));
+        if(color_of($w) == RED) {
+            set_color($w, BLACK);
+            set_color(parent_of($x), RED);
+            $self->$rotate1(parent_of($x));
+            $w = right_of(parent_of($x));
+        }
+        if(color_of($child2->($w)) == BLACK &&
+           color_of($child1->($w)) == BLACK) {
+            set_color($w, RED);
+            $x = parent_of($x);
+        }
+        else {
+            if(color_of($child1->($w)) == BLACK) {
+                set_color($child2->($w), BLACK);
+                set_color($w, RED);
+                $self->$rotate2($w);
+                $w = $child1->(parent_of($x));
+            }
+            set_color($w, color_of(parent_of($x)));
+            set_color(parent_of($x), BLACK);
+            set_color($child1->($w), BLACK);
+            $self->$rotate1(parent_of($x));
+            $x = $self->[ROOT];
+        }
+    }
+    set_color($x, BLACK);
 }
 
 sub _left_rotate {
     my $self = shift;
     my $x = shift or croak('Missing arg: node');
 
-    my $y = $x->[_RIGHT];
+    my $y = $x->[_RIGHT]
+      or return;
     $x->[_RIGHT] = $y->[_LEFT];
     if($y->[_LEFT]) {
         $y->[_LEFT]->[_PARENT] = $x;
@@ -292,7 +348,8 @@ sub _right_rotate {
     my $self = shift;
     my $y = shift or croak('Missing arg: node');
 
-    my $x = $y->[_LEFT];
+    my $x = $y->[_LEFT]
+      or return;
     $y->[_LEFT] = $x->[_RIGHT];
     if($x->[_RIGHT]) {
         $x->[_RIGHT]->[_PARENT] = $y
