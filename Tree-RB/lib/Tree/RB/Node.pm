@@ -154,19 +154,19 @@ sub set_color {
 }
 
 sub color_of {
-    defined $_[0] ? $_[0]->[_COLOR] : BLACK;
+    $_[0] ? $_[0]->[_COLOR] : BLACK;
 }
 
 sub parent_of {
-    defined $_[0] ? $_[0]->[_PARENT] : undef;
+    $_[0] ? $_[0]->[_PARENT] : undef;
 }
 
 sub left_of {
-    defined $_[0] ? $_[0]->[_LEFT] : undef;
+    $_[0] ? $_[0]->[_LEFT] : undef;
 }
 
 sub right_of {
-    defined $_[0] ? $_[0]->[_RIGHT] : undef;
+    $_[0] ? $_[0]->[_RIGHT] : undef;
 }
 
 
