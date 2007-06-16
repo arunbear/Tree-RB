@@ -9,6 +9,9 @@ use Tree::RB::Node::_Constants;
 
 our $VERSION = '0.1';
 
+use Exporter 'import';
+our @EXPORT_OK = qw[LUEQUAL LUGTEQ LULTEQ LUGREAT LULESS LUNEXT LUPREV];
+
 use Data::Dumper;
 use constant {
     LUEQUAL => 0,
@@ -52,6 +55,7 @@ sub _mk_iter {
 sub new {
     my ($class, $cmp) = @_;
     my $obj = [];
+    $obj->[SIZE] = 0;
     if($cmp) {
         ref $cmp eq 'CODE'
           or croak('Invalid arg: codref expected');
@@ -97,17 +101,15 @@ sub lookup {
 
     my $y;
     my $x = $self->[ROOT];
-    my $depth = 0;
     my $next_child;
     while($x) {
         $y = $x;
-        $depth++;
         if($cmp ? $cmp->($key, $x->[_KEY]) == 0
                 : $key eq $x->[_KEY])
         {
             # found it!
             return wantarray
-              ? ($x->[_VAL], $x, $depth)
+              ? ($x->[_VAL], $x)
               : $x->[_VAL];
         }
         if($cmp ? $cmp->($key, $x->[_KEY]) < 0
@@ -123,14 +125,14 @@ sub lookup {
     # Didn't find it :(
     if($mode == LUGTEQ) {
         if($next_child == _LEFT) {
-            return ($y->[_VAL], $y, $depth);
+            return wantarray ? ($y->[_VAL], $y) : $y->[_VAL];
         }
         else {
-            my ($next, $count) = $y->successor;
-            return ($next->[_VAL], $next, $depth+$count);
+            my $next = $y->successor;
+            return wantarray ? ($next->[_VAL], $next) : $next->[_VAL];
         }
     }
-    return (undef, undef, $depth);
+    return (undef, undef);
 }
 
 sub insert {
