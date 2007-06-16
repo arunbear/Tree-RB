@@ -2,7 +2,7 @@ use Test::More tests => 7;
 use strict;
 use warnings;
 
-use Tree::RB;
+use Tree::RB qw[LUEQUAL LUGTEQ LULTEQ LUGREAT LULESS LUNEXT LUPREV];
 
 diag( "Testing lookup in Tree::RB $Tree::RB::VERSION" );
 
@@ -27,14 +27,18 @@ $tree->insert('Germany' => 'Berlin');
 #   |   |          |   |       |   |
 #  <*> <*>        <*> <*>     <*> <*>
 
-my ($val, $count);
+my $val;
 $val = $tree->lookup('Germany');
 is($val, 'Berlin', 'lookup');
-($val, undef, $count) = $tree->lookup('France');
-is($count, 1, 'lookup root - count nodes scanned');
+$val = $tree->lookup('Belgium', LUGTEQ);
+#use Data::Dumper;
+#print Dumper($val)."\n";
+is($val, 'Cairo', 'lookup LUGTEQ: left');
 
-($val, undef, $count) = $tree->lookup('Germany');
-is($count, 3, 'lookup non root - count nodes scanned');
+$val = $tree->lookup('Finland', LUGTEQ);
+is($val, 'Paris', 'lookup LUGTEQ: right');
+
+
 
 #ok(! defined $node, 'lookup deleted node');
 #ok(! defined $val,  q[lookup deleted node's value]);
