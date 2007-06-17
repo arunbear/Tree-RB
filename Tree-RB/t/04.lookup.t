@@ -38,6 +38,12 @@ is($val, 'Cairo', 'lookup LUGTEQ: left');
 $val = $tree->lookup('Finland', LUGTEQ);
 is($val, 'Paris', 'lookup LUGTEQ: right');
 
+is('Budapest', $tree->lookup('Hungary', LULTEQ), 'lookup LULTEQ: node exists');
+ok(!defined $tree->lookup('Belgium', LULTEQ), 'lookup LULTEQ: no lt node');
+is($tree->lookup('Jamaica', LULTEQ), 'Dublin', 'lookup LULTEQ: right');
+is($tree->lookup('Iceland', LULTEQ), 'Budapest', 'lookup LULTEQ: left');
+
+
 
 
 #ok(! defined $node, 'lookup deleted node');
