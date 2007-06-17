@@ -105,16 +105,14 @@ sub lookup {
     while($x) {
         $y = $x;
         if($cmp ? $cmp->($key, $x->[_KEY]) == 0
-                : $key eq $x->[_KEY])
-        {
+                : $key eq $x->[_KEY]) {
             # found it!
             return wantarray
               ? ($x->[_VAL], $x)
               : $x->[_VAL];
         }
         if($cmp ? $cmp->($key, $x->[_KEY]) < 0
-                : $key lt $x->[_KEY])
-        {
+                : $key lt $x->[_KEY]) {
             $next_child = _LEFT;
         }
         else {
@@ -129,6 +127,15 @@ sub lookup {
         }
         else {
             my $next = $y->successor;
+            return wantarray ? ($next->[_VAL], $next) : $next->[_VAL];
+        }
+    }
+    elsif($mode == LULTEQ) {
+        if($next_child == _RIGHT) {
+            return wantarray ? ($y->[_VAL], $y) : $y->[_VAL];
+        }
+        else {
+            my $next = $y->predecessor;
             return wantarray ? ($next->[_VAL], $next) : $next->[_VAL];
         }
     }
