@@ -107,6 +107,12 @@ sub lookup {
         if($cmp ? $cmp->($key, $x->[_KEY]) == 0
                 : $key eq $x->[_KEY]) {
             # found it!
+            if($mode == LUGREAT || $mode == LUNEXT) {
+                $x = $x->successor;
+            }
+            elsif($mode == LULESS || $mode == LUPREV) {
+                $x = $x->predecessor;
+            }
             return wantarray
               ? ($x->[_VAL], $x)
               : $x->[_VAL];
@@ -121,7 +127,7 @@ sub lookup {
         $x = $x->[$next_child];
     }
     # Didn't find it :(
-    if($mode == LUGTEQ) {
+    if($mode == LUGTEQ || $mode == LUGREAT) {
         if($next_child == _LEFT) {
             return wantarray ? ($y->[_VAL], $y) : $y->[_VAL];
         }
@@ -130,7 +136,7 @@ sub lookup {
             return wantarray ? ($next->[_VAL], $next) : $next->[_VAL];
         }
     }
-    elsif($mode == LULTEQ) {
+    elsif($mode == LULTEQ || $mode == LULESS) {
         if($next_child == _RIGHT) {
             return wantarray ? ($y->[_VAL], $y) : $y->[_VAL];
         }
@@ -139,7 +145,7 @@ sub lookup {
             return wantarray ? ($next->[_VAL], $next) : $next->[_VAL];
         }
     }
-    return (undef, undef);
+    return;
 }
 
 sub insert {
