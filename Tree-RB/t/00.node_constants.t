@@ -1,4 +1,4 @@
-use Test::More tests => 7;
+use Test::More tests => 9;
 
 use_ok( 'Tree::RB::Node::_Constants' );
 diag( "Testing Tree::RB::Node::_Constants $Tree::RB::Node::_Constants::VERSION" );
@@ -14,5 +14,5 @@ foreach my $m (qw[
     RED
   ])
 {
-    can_ok('Tree::RB::Node::_Fields', $m);
+    can_ok('Tree::RB::Node::_Constants', $m);
 }
