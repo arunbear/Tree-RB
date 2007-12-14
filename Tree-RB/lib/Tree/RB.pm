@@ -1,6 +1,5 @@
 package Tree::RB;
 
-use warnings;
 use strict;
 use Carp;
 

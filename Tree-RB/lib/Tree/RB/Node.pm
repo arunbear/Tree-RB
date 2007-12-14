@@ -1,6 +1,5 @@
 package Tree::RB::Node;
 
-use warnings;
 use strict;
 use Carp;
 use Tree::RB::Node::_Constants;
