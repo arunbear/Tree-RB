@@ -63,6 +63,8 @@ sub new {
     return bless $obj => $class;
 }
 
+*TIEHASH = \&new;
+
 sub DESTROY { $_[0]->[ROOT]->DESTROY if $_[0]->[ROOT] }
 
 sub resort {
@@ -147,6 +149,8 @@ sub lookup {
     return;
 }
 
+*FETCH = \&lookup;
+
 sub insert {
     my $self = shift;
     my $key_or_node = shift or croak('key or node required');
@@ -198,6 +202,8 @@ sub insert {
     $self->_fix_after_insertion($z);
     $self->[SIZE]++;
 }
+
+*STORE = \&insert;
 
 sub _fix_after_insertion {
     my $self = shift;
