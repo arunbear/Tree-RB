@@ -1,4 +1,4 @@
-use Test::More tests => 8;
+use Test::More tests => 27;
 use strict;
 use warnings;
 
@@ -10,6 +10,7 @@ foreach my $m (qw[
     new
     insert
     iter
+    rev_iter
     size
   ])
 {
@@ -29,30 +30,63 @@ $tree->insert('Germany' => 'Berlin');
 
 ok($tree->size == 6, 'size check after inserts');
 
-my $it = $tree->iter;
+# Iterator tests
+my $it;
+$it = $tree->iter;
 isa_ok($it, 'Tree::RB::Iterator');
 can_ok($it, 'next');
 
-my $node;
+my @iter_tests = (
+    sub {
+	my $node = $_[0]->next;
+	ok($node->key eq 'Egypt' && $node->val eq 'Cairo', 'iterator check');
+    },
+    sub {
+	my $node = $_[0]->next;
+	ok($node->key eq 'England' && $node->val eq 'London', 'iterator check');
+    },
+    sub {
+	my $node = $_[0]->next;
+	ok($node->key eq 'France' && $node->val eq 'Paris', 'iterator check');
+    },
+    sub {
+	my $node = $_[0]->next;
+	ok($node->key eq 'Germany' && $node->val eq 'Berlin', 'iterator check');
+    },
+    sub {
+	my $node = $_[0]->next;
+	ok($node->key eq 'Hungary' && $node->val eq 'Budapest', 'iterator check');
+    },
+    sub {
+	my $node = $_[0]->next;
+	ok($node->key eq 'Ireland' && $node->val eq 'Dublin', 'iterator check');
+    },
+    sub {
+	my $node = $_[0]->next;
+	ok(!defined $node, 'iterator check - no more items');
+    },
+);
+foreach my $t (@iter_tests) {
+    $t->($it);
+}
 
-$node = $it->next;
-ok($node->key eq 'Egypt' && $node->val eq 'Cairo', 'iterator check');
+# Reverse iterator tests
+$it = $tree->rev_iter;
+isa_ok($it, 'Tree::RB::Iterator');
+can_ok($it, 'next');
 
-$node = $it->next;
-ok($node->key eq 'England' && $node->val eq 'London', 'iterator check');
+my @rev_iter_tests = (reverse(@iter_tests[0 .. $#iter_tests-1]), $iter_tests[-1]);
 
-$node = $it->next;
-ok($node->key eq 'France' && $node->val eq 'Paris', 'iterator check');
+=pod
 
-$node = $it->next;
-ok($node->key eq 'Germany' && $node->val eq 'Berlin', 'iterator check');
+Longer way to reverse
 
-$node = $it->next;
-ok($node->key eq 'Hungary' && $node->val eq 'Budapest', 'iterator check');
+    my @rev_iter_tests = @iter_tests;
+    @rev_iter_tests = (pop @rev_iter_tests, @rev_iter_tests);
+    @rev_iter_tests = reverse @rev_iter_tests;
 
-$node = $it->next;
-ok($node->key eq 'Ireland' && $node->val eq 'Dublin', 'iterator check');
+=cut
 
-$node = $it->next;
-ok(!defined $node, 'iterator check - no more items');
-
+foreach my $t (@rev_iter_tests) {
+    $t->($it);
+}
