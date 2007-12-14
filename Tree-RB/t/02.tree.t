@@ -1,4 +1,4 @@
-use Test::More tests => 3;
+use Test::More tests => 8;
 use strict;
 use warnings;
 
@@ -9,46 +9,50 @@ diag( "Testing Tree::RB $Tree::RB::VERSION" );
 foreach my $m (qw[
     new
     insert
+    iter
+    size
   ])
 {
     can_ok('Tree::RB', $m);
 }
 
+my $tree = Tree::RB->new;
+isa_ok($tree, 'Tree::RB');
+ok($tree->size == 0, 'New tree has size zero');
 
+$tree->insert('France'  => 'Paris');
+$tree->insert('England' => 'London');
+$tree->insert('Hungary' => 'Budapest');
+$tree->insert('Ireland' => 'Dublin');
+$tree->insert('Egypt'   => 'Cairo');
+$tree->insert('Germany' => 'Berlin');
 
-__END__
+ok($tree->size == 6, 'size check after inserts');
 
-my $node = Tree::RB::Node->new('England' => 'London');
-isa_ok( $node, 'Tree::RB::Node' );
-is($node->key, 'England', 'key retrieved after new');
-is($node->val, 'London',  'value retrieved after new');
+my $it = $tree->iter;
+isa_ok($it, 'Tree::RB::Iterator');
+can_ok($it, 'next');
 
-$node->key('France');
-is($node->key, 'France', 'key retrieved after set');
+my $node;
 
-$node->val('Paris');
-is($node->val, 'Paris', 'value retrieved after set');
+$node = $it->next;
+ok($node->key eq 'Egypt' && $node->val eq 'Cairo', 'iterator check');
 
-$node->color(1);
-is($node->color, 1, 'color retrieved after set');
+$node = $it->next;
+ok($node->key eq 'England' && $node->val eq 'London', 'iterator check');
 
-my $left_node  = Tree::RB::Node->new('England' => 'London');
-$left_node->parent($node);
-$node->left($left_node);
-is($node->left, $left_node, 'left retrieved after set');
+$node = $it->next;
+ok($node->key eq 'France' && $node->val eq 'Paris', 'iterator check');
 
-my $right_node = Tree::RB::Node->new('Hungary' => 'Budapest');
-$right_node->parent($node);
-$node->right($right_node);
-is($node->right, $right_node, 'right retrieved after set');
+$node = $it->next;
+ok($node->key eq 'Germany' && $node->val eq 'Berlin', 'iterator check');
 
-my $parent_node = Tree::RB::Node->new('Ireland' => 'Dublin');
-$parent_node->left($node);
-$node->parent($parent_node);
-is($node->parent, $parent_node, 'parent retrieved after set');
+$node = $it->next;
+ok($node->key eq 'Hungary' && $node->val eq 'Budapest', 'iterator check');
 
-is($parent_node->min->key, 'England', 'min');
+$node = $it->next;
+ok($node->key eq 'Ireland' && $node->val eq 'Dublin', 'iterator check');
 
-is($node->max->key, 'Hungary', 'max');
-is($right_node->successor->key, 'Ireland', 'successor');
-is($parent_node->predecessor->key, 'Hungary', 'predecessor');
+$node = $it->next;
+ok(!defined $node, 'iterator check - no more items');
+
