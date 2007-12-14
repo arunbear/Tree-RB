@@ -1,4 +1,4 @@
-use Test::More tests => 7;
+use Test::More tests => 9;
 use strict;
 use warnings;
 
@@ -43,8 +43,6 @@ ok(!defined $tree->lookup('Belgium', LULTEQ), 'lookup LULTEQ: no lt node');
 is($tree->lookup('Jamaica', LULTEQ), 'Dublin', 'lookup LULTEQ: right');
 is($tree->lookup('Iceland', LULTEQ), 'Budapest', 'lookup LULTEQ: left');
 
+is($tree->lookup('Belgium', LUGREAT), 'Cairo', 'lookup LUGREAT: left');
+is($tree->lookup('Finland', LUGREAT), 'Paris', 'lookup LUGREAT: right');
 
-
-
-#ok(! defined $node, 'lookup deleted node');
-#ok(! defined $val,  q[lookup deleted node's value]);
