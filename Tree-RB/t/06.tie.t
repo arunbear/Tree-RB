@@ -34,11 +34,10 @@ $capital{'Germany'} = 'Berlin';
 ok(keys %capital == 6, 'Size check (keys) after inserts');
 ok(scalar %capital == 6, 'Size check (scalar) after inserts');
 
-my @keys = keys %capital;
-is_deeply(\@keys, [qw/Egypt England France Germany Hungary Ireland/], 'check keys list');
+my @keys = qw/Egypt England France Germany Hungary Ireland/;
+is_deeply([keys %capital], \@keys, 'check keys list');
 
-my @values = values %capital;
-is_deeply(\@values, [qw/Cairo London Paris Berlin Budapest Dublin/], 'check values list');
+is_deeply([values %capital], [qw/Cairo London Paris Berlin Budapest Dublin/], 'check values list');
 
 my ($key, $val);
 
@@ -69,3 +68,18 @@ ok(scalar %capital == 0, 'size zero after clearing hash');
 
 untie %capital;
 ok(@$tied == 0, 'underlying array is empty after untie');
+
+# Custom sorting
+
+$tied = tie(%capital, 'Tree::RB', sub { $_[1] cmp $_[0] });
+
+isa_ok($tied, 'Tree::RB');
+
+$capital{'France'}  = 'Paris';
+$capital{'England'} = 'London';
+$capital{'Hungary'} = 'Budapest';
+$capital{'Ireland'} = 'Dublin';
+$capital{'Egypt'}   = 'Cairo';
+$capital{'Germany'} = 'Berlin';
+
+is_deeply([keys %capital], [reverse @keys], 'check keys list (reverse sort)');
