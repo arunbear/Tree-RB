@@ -25,7 +25,10 @@ use constant {
     ROOT  => 0,
     CMP   => 1,
     SIZE  => 2,
+    HASH_ITER => 3,
 };
+
+# Node and hash Iteration
 
 sub _mk_iter {
     my $start_fn = shift || 'min';
@@ -51,6 +54,23 @@ sub _mk_iter {
 *iter     = _mk_iter(qw/min successor/);
 *rev_iter = _mk_iter(qw/max predecessor/);
 
+sub FIRSTKEY {
+    my $self = shift; 
+
+    $self->[HASH_ITER] = $self->iter;
+    my $node = $self->[HASH_ITER]->next
+      or return;
+    return $node->[_KEY];
+}
+
+sub NEXTKEY {
+    my $self = shift; 
+
+    my $node = $self->[HASH_ITER]->next
+      or return;
+    return $node->[_KEY];
+}
+
 sub new {
     my ($class, $cmp) = @_;
     my $obj = [];
@@ -67,6 +87,22 @@ sub new {
 
 sub DESTROY { $_[0]->[ROOT]->DESTROY if $_[0]->[ROOT] }
 
+sub CLEAR {
+    my $self = shift; 
+    if($self->[ROOT]) {
+	$self->[ROOT]->DESTROY;
+	undef $self->[ROOT];
+	undef $self->[HASH_ITER];
+	$self->[SIZE] = 0;
+    }
+}
+
+sub UNTIE {
+    my $self = shift; 
+    $self->DESTROY;
+    undef @$self;
+}
+
 sub resort {
     my $self = $_[0];
     my $cmp  = $_[1];
@@ -81,6 +117,8 @@ sub resort {
 
 sub root { $_[0]->[ROOT] }
 sub size { $_[0]->[SIZE] }
+
+*SCALAR = \&size;
 
 sub min {
     my $self = shift;
@@ -150,6 +188,12 @@ sub lookup {
 }
 
 *FETCH = \&lookup;
+
+sub EXISTS {
+    my $self = shift;
+    my $key  = shift;
+    return defined $self->lookup($key);
+}
 
 sub insert {
     my $self = shift;
@@ -294,6 +338,8 @@ sub delete {
     $self->[SIZE]--;
     return $y;
 }
+
+*DELETE = \&delete;
 
 sub _fix_after_deletion {
     my $self = shift;
