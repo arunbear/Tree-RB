@@ -1,4 +1,4 @@
-use Test::More tests => 22;
+use Test::More tests => 24;
 use strict;
 use warnings;
 use Data::Dumper;
