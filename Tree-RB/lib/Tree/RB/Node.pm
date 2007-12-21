@@ -7,7 +7,7 @@ use Tree::RB::Node::_Constants;
 use Exporter 'import';
 our @EXPORT_OK = qw[set_color color_of parent_of left_of right_of];
 
-use version; our $VERSION = qv('0.0.3');
+our $VERSION = '0.1';
 
 my %attribute = (
     key    => _KEY,
