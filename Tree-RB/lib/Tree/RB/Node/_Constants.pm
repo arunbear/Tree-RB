@@ -3,7 +3,7 @@ package Tree::RB::Node::_Constants;
 use strict;
 use Carp;
 
-use version; our $VERSION = qv('0.0.3');
+our $VERSION = '0.1';
 
 use Exporter 'import';
 
