@@ -1,4 +1,4 @@
-use Test::More tests => 27;
+use Test::More tests => 29;
 use strict;
 use warnings;
 
@@ -29,6 +29,8 @@ $tree->insert('Egypt'   => 'Cairo');
 $tree->insert('Germany' => 'Berlin');
 
 ok($tree->size == 6, 'size check after inserts');
+is($tree->min->key, 'Egypt', 'min');
+is($tree->max->key, 'Ireland', 'max');
 
 # Iterator tests
 my $it;
