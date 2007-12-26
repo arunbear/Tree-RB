@@ -110,8 +110,8 @@ sub resort {
       or croak sprintf(q[Arg of type coderef required; got %s], ref $cmp || 'undef');
 
     my $new_tree = __PACKAGE__->new($cmp);
-    $self->[ROOT]->strip(sub { $new_tree->insert($_[0]) });
-    $new_tree->insert(delete $self->[ROOT]);
+    $self->[ROOT]->strip(sub { $new_tree->put($_[0]) });
+    $new_tree->put(delete $self->[ROOT]);
     $_[0] = $new_tree;
 }
 
@@ -188,6 +188,7 @@ sub lookup {
 }
 
 *FETCH = \&lookup;
+*get   = \&lookup;
 
 sub EXISTS {
     my $self = shift;
@@ -195,7 +196,7 @@ sub EXISTS {
     return defined $self->lookup($key);
 }
 
-sub insert {
+sub put {
     my $self = shift;
     my $key_or_node = shift or croak('key or node required');
     my $val = shift;
@@ -219,6 +220,7 @@ sub insert {
             $x->[_VAL] = $z->[_VAL];
             return $old_val;
         }
+
         if($cmp ? $cmp->($z->[_KEY], $x->[_KEY]) < 0
                 : $z->[_KEY] lt $x->[_KEY])
         {
@@ -247,7 +249,7 @@ sub insert {
     $self->[SIZE]++;
 }
 
-*STORE = \&insert;
+*STORE = \&put;
 
 sub _fix_after_insertion {
     my $self = shift;
@@ -438,22 +440,48 @@ __END__
 
 =head1 NAME
 
-Tree::RB - [One line description of module's purpose here]
+Tree::RB - Perl implementation of the Red/Black tree, a type of balanced binary search tree. 
 
 
 =head1 VERSION
 
-This document describes Tree::RB version 0.0.1
+This document describes Tree::RB version 0.1
 
 
 =head1 SYNOPSIS
 
-    use Tree::RB;
+use Tree::RB;
 
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
+my $tree = Tree::RB->new;
+$tree->put('France'  => 'Paris');
+$tree->put('England' => 'London');
+$tree->put('Hungary' => 'Budapest');
+$tree->put('Ireland' => 'Dublin');
+$tree->put('Egypt'   => 'Cairo');
+$tree->put('Germany' => 'Berlin');
+
+$tree->put('Alaska' => 'Anchorage'); # D'oh!
+$tree->delete('Alaska');
+
+print $tree->min->key; # 'Egypt' 
+print $tree->max->key; # 'Ireland' 
+print $tree->size; # 6
+
+# iterators
+
+# print items, ordered by key
+my $it = $tree->iter;
+
+while(my $node = $it->next) {
+    sprintf "key = %s, value = %s\n", $node->key, $node->val;
+}
+
+# print items in reverse order
+$it = $tree->rev_iter;
+
+while(my $node = $it->next) {
+    sprintf "key = %s, value = %s\n", $node->key, $node->val;
+}
 
 
 =head1 DESCRIPTION
@@ -509,23 +537,10 @@ Tree::RB requires no configuration files or environment variables.
 
 =head1 DEPENDENCIES
 
-=for author to fill in:
-    A list of all the other modules that this module relies upon,
-    including any restrictions on versions, and an indication whether
-    the module is part of the standard Perl distribution, part of the
-    module's distribution, or must be installed separately. ]
-
 None.
 
 
 =head1 INCOMPATIBILITIES
-
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
 
 None reported.
 
