@@ -8,7 +8,7 @@ diag( "Testing deletion in Tree::RB $Tree::RB::VERSION" );
 
 my $tree = Tree::RB->new;
 
-$tree->insert('England' => 'London');
+$tree->put('England' => 'London');
 
 my $size = $tree->size;
 
@@ -21,11 +21,11 @@ my ($val, $node) = $tree->lookup('England');
 ok(! defined $node, 'lookup deleted node');
 ok(! defined $val,  q[lookup deleted node's value]);
 
-$tree->insert('France' => 'Paris');
-$tree->insert('England' => 'London');
-$tree->insert('Hungary' => 'Budapest');
-$tree->insert('Ireland' => 'Dublin');
-$tree->insert('Egypt' => 'Cairo');
+$tree->put('France' => 'Paris');
+$tree->put('England' => 'London');
+$tree->put('Hungary' => 'Budapest');
+$tree->put('Ireland' => 'Dublin');
+$tree->put('Egypt' => 'Cairo');
 
 #               |
 #          <B:France>

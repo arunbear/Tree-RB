@@ -8,12 +8,12 @@ diag( "Testing lookup in Tree::RB $Tree::RB::VERSION" );
 
 my $tree = Tree::RB->new;
 
-$tree->insert('France' => 'Paris');
-$tree->insert('England' => 'London');
-$tree->insert('Hungary' => 'Budapest');
-$tree->insert('Ireland' => 'Dublin');
-$tree->insert('Egypt' => 'Cairo');
-$tree->insert('Germany' => 'Berlin');
+$tree->put('France' => 'Paris');
+$tree->put('England' => 'London');
+$tree->put('Hungary' => 'Budapest');
+$tree->put('Ireland' => 'Dublin');
+$tree->put('Egypt' => 'Cairo');
+$tree->put('Germany' => 'Berlin');
 
 #                   |
 #              <B:France>

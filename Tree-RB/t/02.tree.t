@@ -8,7 +8,7 @@ diag( "Testing Tree::RB $Tree::RB::VERSION" );
 
 foreach my $m (qw[
     new
-    insert
+    put 
     iter
     rev_iter
     size
@@ -21,12 +21,12 @@ my $tree = Tree::RB->new;
 isa_ok($tree, 'Tree::RB');
 ok($tree->size == 0, 'New tree has size zero');
 
-$tree->insert('France'  => 'Paris');
-$tree->insert('England' => 'London');
-$tree->insert('Hungary' => 'Budapest');
-$tree->insert('Ireland' => 'Dublin');
-$tree->insert('Egypt'   => 'Cairo');
-$tree->insert('Germany' => 'Berlin');
+$tree->put('France'  => 'Paris');
+$tree->put('England' => 'London');
+$tree->put('Hungary' => 'Budapest');
+$tree->put('Ireland' => 'Dublin');
+$tree->put('Egypt'   => 'Cairo');
+$tree->put('Germany' => 'Berlin');
 
 ok($tree->size == 6, 'size check after inserts');
 is($tree->min->key, 'Egypt', 'min');
