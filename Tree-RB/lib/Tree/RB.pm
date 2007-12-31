@@ -90,10 +90,10 @@ sub DESTROY { $_[0]->[ROOT]->DESTROY if $_[0]->[ROOT] }
 sub CLEAR {
     my $self = shift; 
     if($self->[ROOT]) {
-	$self->[ROOT]->DESTROY;
-	undef $self->[ROOT];
-	undef $self->[HASH_ITER];
-	$self->[SIZE] = 0;
+        $self->[ROOT]->DESTROY;
+        undef $self->[ROOT];
+        undef $self->[HASH_ITER];
+        $self->[SIZE] = 0;
     }
 }
 
@@ -450,89 +450,194 @@ This document describes Tree::RB version 0.1
 
 =head1 SYNOPSIS
 
-use Tree::RB;
+    use Tree::RB;
 
-my $tree = Tree::RB->new;
-$tree->put('France'  => 'Paris');
-$tree->put('England' => 'London');
-$tree->put('Hungary' => 'Budapest');
-$tree->put('Ireland' => 'Dublin');
-$tree->put('Egypt'   => 'Cairo');
-$tree->put('Germany' => 'Berlin');
+    my $tree = Tree::RB->new;
+    $tree->put('France'  => 'Paris');
+    $tree->put('England' => 'London');
+    $tree->put('Hungary' => 'Budapest');
+    $tree->put('Ireland' => 'Dublin');
+    $tree->put('Egypt'   => 'Cairo');
+    $tree->put('Germany' => 'Berlin');
 
-$tree->put('Alaska' => 'Anchorage'); # D'oh!
-$tree->delete('Alaska');
+    $tree->put('Alaska' => 'Anchorage'); # D'oh!
+    $tree->delete('Alaska');
 
-print $tree->min->key; # 'Egypt' 
-print $tree->max->key; # 'Ireland' 
-print $tree->size; # 6
+    print $tree->get('Ireland'); # 'Dublin'
 
-# iterators
+    print $tree->min->key; # 'Egypt' 
+    print $tree->max->key; # 'Ireland' 
+    print $tree->size; # 6
 
-# print items, ordered by key
-my $it = $tree->iter;
+    # print items, ordered by key
+    my $it = $tree->iter;
 
-while(my $node = $it->next) {
-    sprintf "key = %s, value = %s\n", $node->key, $node->val;
-}
+    while(my $node = $it->next) {
+        sprintf "key = %s, value = %s\n", $node->key, $node->val;
+    }
 
-# print items in reverse order
-$it = $tree->rev_iter;
+    # print items in reverse order
+    $it = $tree->rev_iter;
 
-while(my $node = $it->next) {
-    sprintf "key = %s, value = %s\n", $node->key, $node->val;
-}
+    while(my $node = $it->next) {
+        sprintf "key = %s, value = %s\n", $node->key, $node->val;
+    }
 
+    # Hash interface
+    tie my %capital, 'Tree::RB';
+
+    # or do this to store items in descending order 
+    tie my %capital, 'Tree::RB', sub { $_[1] cmp $_[0] };
+
+    $capital{'France'}  = 'Paris';
+    $capital{'England'} = 'London';
+    $capital{'Hungary'} = 'Budapest';
+    $capital{'Ireland'} = 'Dublin';
+    $capital{'Egypt'}   = 'Cairo';
+    $capital{'Germany'} = 'Berlin';
+
+    # print items in order
+    while(my ($key, $val) = each %capital) {
+        printf "key = $key, value = $val\n";
+    }
 
 =head1 DESCRIPTION
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+This is a Perl implementation of the Red/Black tree, a type of balanced binary search tree. 
+
+A tied hash interface is also provided to allow ordered hashes to be used.
+
+See the Wikipedia article at L<http://en.wikipedia.org/wiki/Red-black_tree> for more on Red/Black trees.
 
 
 =head1 INTERFACE
 
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
+=head2 new([CODEREF])
 
+Creates and returns a new tree. If a reference to a subroutine is passed to
+new(), the subroutine will be used to override the tree's default lexical
+ordering and provide a user a defined ordering. 
 
-=head1 DIAGNOSTICS
+This subroutine should be just like a comparator subroutine used with L<sort>, 
+except that it doesn't do the $a, $b trick.
 
-=for author to fill in:
-    List every single error and warning message that the module can
-    generate (even the ones that will "never happen"), with a full
-    explanation of each problem, one or more likely causes, and any
-    suggested remedies.
+For example, to get a case insensitive ordering
+
+    my $tree = Tree::RB->new(sub { lc $_[0] cmp lc $_[1]});
+    $tree->put('Wall'  => 'Larry');
+    $tree->put('Smith' => 'Agent');
+    $tree->put('mouse' => 'micky');
+    $tree->put('duck'  => 'donald');
+
+    my $it = $tree->iter;
+
+    while(my $node = $it->next) {
+        sprintf "key = %s, value = %s\n", $node->key, $node->val;
+    }
+
+=head2 resort(CODEREF)
+
+Changes the ordering of nodes within the tree. The new ordering is
+specified by a comparator subroutine which must be passed to resort().
+
+See L</new> for further information about the comparator.
+
+=head2 size()
+
+Returns the number of nodes in the tree.
+
+=head2 root()
+
+Returns the root node of the tree. This will either be undef
+if no nodes have been added to the tree, or a L<Tree::RB::Node> object.
+See the L<Tree::RB::Node> manual page for details on the Node object.
+
+=head2 min()
+
+Returns the node with the minimal key.
+
+=head2 max()
+
+Returns the node with the maximal key.
+
+=head2 lookup(KEY, [MODE])
+
+When called in scalar context, lookup(KEY) returns the value
+associated with KEY.
+
+When called in list context, lookup(KEY) returns a list whose first
+element is the value associated with KEY, and whose second element
+is the node containing the key/value.
+
+An optional MODE parameter can be passed to lookup() to influence
+which key is returned.
+
+The values of MODE are constants that are exported on demand by
+Tree::RB
+
+    use Tree::RB qw[LUEQUAL LUGTEQ LULTEQ LUGREAT LULESS LUNEXT LUPREV];
 
 =over
 
-=item C<< Error message here, perhaps with %s placeholders >>
+=item LUEQUAL
 
-[Description of error here]
+Returns node exactly matching the key.
 
-=item C<< Another error message here >>
+=item LUGTEQ
 
-[Description of error here]
+Returns the node exactly matching the specified key, 
+if this is not found then the next node that is greater than the specified key is returned.
 
-[Et cetera, et cetera]
+=item LULTEQ
+
+Returns the node exactly matching the specified key, 
+if this is not found then the next node that is less than the specified key is returned.
+
+=item LUGREAT
+
+Returns the node that is just greater than the specified key - not equal to. 
+This mode is similar to LUNEXT except that the specified key need not exist in the tree.
+
+=item LULESS
+
+Returns the node that is just less than the specified key - not equal to. 
+This mode is similar to LUPREV except that the specified key need not exist in the tree.
+
+=item LUNEXT
+
+Looks for the key specified, if not found returns C<undef>. 
+If the node is found returns the next node that is greater than 
+the one found (or C<undef> if there is no next node). 
+
+This can be used to step through the tree in order.
+
+=item LUPREV
+
+Looks for the key specified, if not found returns C<undef>. 
+If the node is found returns the previous node that is less than 
+the one found (or C<undef> if there is no previous node). 
+
+This can be used to step through the tree in reverse order.
 
 =back
 
+=head2 get(KEY)
 
-=head1 CONFIGURATION AND ENVIRONMENT
+get() is an alias for lookup().
 
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
+=head2 put(KEY, VALUE)
 
-Tree::RB requires no configuration files or environment variables.
+Adds a new node to the tree. 
+
+The first argument is the key of the node, the second is its value. 
+
+If a node with that key already exists, its value is replaced with 
+the given value and the old value is returned. Otherwise, undef is returned.
+
+=head2 delete(KEY)
+
+If the tree has a node with the specified key, that node is
+deleted from the tree and returned, otherwise C<undef> is returned.
 
 
 =head1 DEPENDENCIES
@@ -546,15 +651,6 @@ None reported.
 
 
 =head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
 
 No bugs have been reported.
 
