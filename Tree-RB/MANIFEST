@@ -6,8 +6,11 @@ Makefile.PL
 README
 lib/Tree/RB.pm
 lib/Tree/RB/Node.pm
-lib/Tree/RB/Node/_Fields.pm
+lib/Tree/RB/Node/_Constants.pm
 t/00.load.t
-t/perlcritic.t
-t/pod-coverage.t
-t/pod.t
+t/01.node.t
+t/01.node_constants.t
+t/02.tree.t
+t/03.delete.t
+t/04.lookup.t
+t/06.tie.t
