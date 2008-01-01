@@ -174,7 +174,7 @@ __END__
 
 =head1 NAME
 
-Tree::RB::Node - [One line description of module's purpose here]
+Tree::RB::Node - A node class for implementing Red/Black trees
 
 
 =head1 VERSION
@@ -184,112 +184,137 @@ This document describes Tree::RB::Node version 0.0.1
 
 =head1 SYNOPSIS
 
-    use Tree::RB::Node;
+    use Tree::RB;
 
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
+    my $tree = Tree::RB->new;
+    $tree->put('France'  => 'Paris');
+    $tree->put('England' => 'London');
+
+    my $node = $tree->delete('France'); # $node is a Tree::RB::Node object
+    print $node->key; # 'France'
+    print $node->val; # 'Paris'
 
 
 =head1 DESCRIPTION
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+A Tree::RB tree is made up of nodes that are objects of type Tree::RB::Node
 
 
 =head1 INTERFACE
 
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
+A Tree::RB::Node object supports the following methods:
 
-=over
+=head2 new()
 
-=item C<< leaf >>
+Creates and returns a new node.
+
+=head2 key([KEY])
+
+Get/set the key of the node. This is what the nodes are sorted by in the tree.
+
+=head2 val([VALUE])
+
+Get/set the value of the node. This can be any scalar.
+
+=head2 color([COLOR])
+
+Get/set the color of the node. Valid colors are the constants RED
+and BLACK which are exported by Tree::RB::Node::_Constants
+
+=head2 parent([PARENT])
+
+Get/set the parent of the node, which must be another Tree::RB::Node object.
+
+=head2 left([NODE])
+
+Get/set the left child node of the node, which must be another Tree::RB::Node object.
+
+=head2 right([NODE])
+
+Get/set the right child node of the node, which must be another Tree::RB::Node object.
+
+=head2 min()
+
+Returns the node with the minimal key starting from this node.
+
+=head2 max()
+
+Returns the node with the maximal key starting from this node.
+
+=head2 leaf()
 
 Returns the first leaf node found starting from this node, using a depth first,
 left to right search.
 
-=item C<< strip([$callback]) >>
+=head2 successor()
 
-Strips off all nodes under this node. if a callback is specified,
+Returns the node with the smallest key larger than this node's key,
+or this node if it is the node with the maximal key.
+
+=head2 predecessor()
+
+Returns the node with the greatest key smaller than this node's key,
+or this node if it is the node with the minimal key.
+
+=head2 as_lol([NODE])
+
+Returns a list of lists representing the tree whose root is either NODE
+if NODE is specified, or this node otherwise.
+
+This could be used for printing a tree, as the following snippet shows
+(this assumes that Tree::DAG_Node is also installed)
+
+    use strict;
+    use Tree::DAG_Node;
+    use Tree::RB;
+
+    my $t = Tree::RB->new;
+
+    foreach (qw/the rain in spain falls mainly in the plains/) {
+        $t->put($_, "${_} val");
+    }
+
+    my $tree = Tree::DAG_Node->lol_to_tree( $t->root->as_lol );
+    $, = "\n";
+    print @{ $tree->draw_ascii_tree };
+
+This will print
+
+                      |
+                   <B:rain>
+               /-------------------\
+               |                   |
+             <R:in>             <B:the>
+        /-----------\            /------\
+        |           |            |      |
+    <B:falls>   <B:mainly>   <R:spain> <*>
+      /---\    /------\        /---\
+      |   |    |      |        |   |
+     <*> <*>  <*> <R:plains>  <*> <*>
+                    /---\
+                    |   |
+                   <*> <*>
+
+=head2 strip([$callback])
+
+Strips off all nodes under this node. If a callback is specified,
 it will be called once for each node that is detached, with the detached
 node as its sole argument.
 
-=back
 
-=head1 DIAGNOSTICS
-
-=for author to fill in:
-    List every single error and warning message that the module can
-    generate (even the ones that will "never happen"), with a full
-    explanation of each problem, one or more likely causes, and any
-    suggested remedies.
-
-=over
-
-=item C<< Error message here, perhaps with %s placeholders >>
-
-[Description of error here]
-
-=item C<< Another error message here >>
-
-[Description of error here]
-
-[Et cetera, et cetera]
-
-=back
-
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
-
-Tree::RB::Node requires no configuration files or environment variables.
 
 
 =head1 DEPENDENCIES
-
-=for author to fill in:
-    A list of all the other modules that this module relies upon,
-    including any restrictions on versions, and an indication whether
-    the module is part of the standard Perl distribution, part of the
-    module's distribution, or must be installed separately. ]
 
 None.
 
 
 =head1 INCOMPATIBILITIES
 
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
 None reported.
 
 
 =head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
 
 No bugs have been reported.
 
