@@ -663,6 +663,8 @@ L<http://rt.cpan.org>.
 
 Arun Prasad  C<< <arunbear@cpan.org> >>
 
+Some documentation has been borrowed from Benjamin Holzman's L<Tree::RedBlack>
+and Damian Ivereigh's libredblack (L<http://libredblack.sourceforge.net/>).
 
 =head1 LICENCE AND COPYRIGHT
 

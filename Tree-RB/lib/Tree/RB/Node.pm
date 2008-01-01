@@ -327,6 +327,7 @@ L<http://rt.cpan.org>.
 
 Arun Prasad  C<< <arunbear@cpan.org> >>
 
+Some documentation has been borrowed from Benjamin Holzman's L<Tree::RedBlack::Node>
 
 =head1 LICENCE AND COPYRIGHT
 
