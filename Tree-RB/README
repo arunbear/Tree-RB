@@ -1,19 +1,71 @@
-Tree-RB version 0.0.1
+Tree-RB version 0.1
 
-[ REPLACE THIS...
+NAME
+    Tree::RB - Perl implementation of the Red/Black tree, a type of balanced
+    binary search tree.
 
-  The README is used to introduce the module and provide instructions on
-  how to install the module, any machine dependencies it may have (for
-  example C compilers and installed libraries) and any other information
-  that should be understood before the module is installed.
+SYNOPSIS
+        use Tree::RB;
 
-  A README file is required for CPAN modules since CPAN extracts the
-  README file from a module distribution so that people browsing the
-  archive can use it get an idea of the modules uses. It is usually a
-  good idea to provide version information here so that people can
-  decide whether fixes for the module are worth downloading.
-]
+        my $tree = Tree::RB->new;
+        $tree->put('France'  => 'Paris');
+        $tree->put('England' => 'London');
+        $tree->put('Hungary' => 'Budapest');
+        $tree->put('Ireland' => 'Dublin');
+        $tree->put('Egypt'   => 'Cairo');
+        $tree->put('Germany' => 'Berlin');
 
+        $tree->put('Alaska' => 'Anchorage'); # D'oh!
+        $tree->delete('Alaska');
+
+        print $tree->get('Ireland'); # 'Dublin'
+
+        print $tree->min->key; # 'Egypt' 
+        print $tree->max->key; # 'Ireland' 
+        print $tree->size; # 6
+
+        # print items, ordered by key
+        my $it = $tree->iter;
+
+        while(my $node = $it->next) {
+            sprintf "key = %s, value = %s\n", $node->key, $node->val;
+        }
+
+        # print items in reverse order
+        $it = $tree->rev_iter;
+
+        while(my $node = $it->next) {
+            sprintf "key = %s, value = %s\n", $node->key, $node->val;
+        }
+
+        # Hash interface
+        tie my %capital, 'Tree::RB';
+
+        # or do this to store items in descending order 
+        tie my %capital, 'Tree::RB', sub { $_[1] cmp $_[0] };
+
+        $capital{'France'}  = 'Paris';
+        $capital{'England'} = 'London';
+        $capital{'Hungary'} = 'Budapest';
+        $capital{'Ireland'} = 'Dublin';
+        $capital{'Egypt'}   = 'Cairo';
+        $capital{'Germany'} = 'Berlin';
+
+        # print items in order
+        while(my ($key, $val) = each %capital) {
+            printf "key = $key, value = $val\n";
+        }
+
+DESCRIPTION
+    This is a Perl implementation of the Red/Black tree, a type of balanced
+    binary search tree.
+
+    A tied hash interface is also provided to allow ordered hashes to be
+    used.
+
+    See the Wikipedia article at
+    <http://en.wikipedia.org/wiki/Red-black_tree> for more on Red/Black
+    trees.
 
 INSTALLATION
 
@@ -23,15 +75,6 @@ To install this module, run the following commands:
     make
     make test
     make install
-
-
-Alternatively, to install with Module::Build, you can use the following commands:
-
-    perl Build.PL
-    ./Build
-    ./Build test
-    ./Build install
-
 
 
 DEPENDENCIES
