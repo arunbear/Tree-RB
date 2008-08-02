@@ -5,11 +5,12 @@ use Carp;
 
 use Tree::RB::Node qw[set_color color_of parent_of left_of right_of];
 use Tree::RB::Node::_Constants;
+use vars qw( $VERSION @EXPORT_OK );
+$VERSION = '0.2';
 
-our $VERSION = '0.1';
-
-use Exporter 'import';
-our @EXPORT_OK = qw[LUEQUAL LUGTEQ LULTEQ LUGREAT LULESS LUNEXT LUPREV];
+require Exporter;
+*import    = \&Exporter::import;
+@EXPORT_OK = qw[LUEQUAL LUGTEQ LULTEQ LUGREAT LULESS LUNEXT LUPREV];
 
 use Data::Dumper;
 use constant {
