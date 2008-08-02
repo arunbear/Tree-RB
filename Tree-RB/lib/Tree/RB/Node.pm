@@ -3,11 +3,13 @@ package Tree::RB::Node;
 use strict;
 use Carp;
 use Tree::RB::Node::_Constants;
+use vars qw( $VERSION @EXPORT_OK );
 
-use Exporter 'import';
-our @EXPORT_OK = qw[set_color color_of parent_of left_of right_of];
+require Exporter;
+*import    = \&Exporter::import;
+@EXPORT_OK = qw[set_color color_of parent_of left_of right_of];
 
-our $VERSION = '0.1';
+$VERSION = '0.2';
 
 my %attribute = (
     key    => _KEY,
