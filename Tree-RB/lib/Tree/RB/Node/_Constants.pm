@@ -2,12 +2,14 @@ package Tree::RB::Node::_Constants;
 
 use strict;
 use Carp;
+use vars qw( $VERSION @EXPORT );
 
-our $VERSION = '0.1';
+$VERSION = '0.2';
 
-use Exporter 'import';
+require Exporter;
+*import = \&Exporter::import;
 
-our @EXPORT = qw[_PARENT _LEFT _RIGHT _COLOR _KEY _VAL RED BLACK];
+@EXPORT = qw[_PARENT _LEFT _RIGHT _COLOR _KEY _VAL RED BLACK];
 
 use constant {
     _KEY    => 0,
