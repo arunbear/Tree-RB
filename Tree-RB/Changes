@@ -3,3 +3,8 @@ Revision history for Tree-RB
 0.1  01 January 2008 20:05
      Initial release.
 
+0.2  02 August  2008 12:57
+     Changes to work with older Perls:
+       * 'use vars' instead of 'our'
+       * Manually pull in &Exporter::import
+       * Added a comment crediting java.util.TreeMap for balancing helper functions.
