@@ -146,6 +146,10 @@ sub strip {
 sub DESTROY { $_[0]->strip; }
 
 # Null aware accessors to assist with rebalancings during insertion and deletion
+#
+# A weird case of Java to the rescue!
+# These are inspired by http://www.javaresearch.org/source/jdk142/java/util/TreeMap.java.html
+# which was found via http://en.wikipedia.org/wiki/Red-black_tree#Implementations
 
 sub set_color {
     my ($node, $color) = @_;
