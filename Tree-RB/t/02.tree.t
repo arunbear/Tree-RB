@@ -40,32 +40,32 @@ can_ok($it, 'next');
 
 my @iter_tests = (
     sub {
-	my $node = $_[0]->next;
-	ok($node->key eq 'Egypt' && $node->val eq 'Cairo', 'iterator check');
+        my $node = $_[0]->next;
+        ok($node->key eq 'Egypt' && $node->val eq 'Cairo', 'iterator check');
     },
     sub {
-	my $node = $_[0]->next;
-	ok($node->key eq 'England' && $node->val eq 'London', 'iterator check');
+        my $node = $_[0]->next;
+        ok($node->key eq 'England' && $node->val eq 'London', 'iterator check');
     },
     sub {
-	my $node = $_[0]->next;
-	ok($node->key eq 'France' && $node->val eq 'Paris', 'iterator check');
+        my $node = $_[0]->next;
+        ok($node->key eq 'France' && $node->val eq 'Paris', 'iterator check');
     },
     sub {
-	my $node = $_[0]->next;
-	ok($node->key eq 'Germany' && $node->val eq 'Berlin', 'iterator check');
+        my $node = $_[0]->next;
+        ok($node->key eq 'Germany' && $node->val eq 'Berlin', 'iterator check');
     },
     sub {
-	my $node = $_[0]->next;
-	ok($node->key eq 'Hungary' && $node->val eq 'Budapest', 'iterator check');
+        my $node = $_[0]->next;
+        ok($node->key eq 'Hungary' && $node->val eq 'Budapest', 'iterator check');
     },
     sub {
-	my $node = $_[0]->next;
-	ok($node->key eq 'Ireland' && $node->val eq 'Dublin', 'iterator check');
+        my $node = $_[0]->next;
+        ok($node->key eq 'Ireland' && $node->val eq 'Dublin', 'iterator check');
     },
     sub {
-	my $node = $_[0]->next;
-	ok(!defined $node, 'iterator check - no more items');
+        my $node = $_[0]->next;
+        ok(!defined $node, 'iterator check - no more items');
     },
 );
 foreach my $t (@iter_tests) {
