@@ -27,6 +27,7 @@ use constant {
     CMP   => 1,
     SIZE  => 2,
     HASH_ITER => 3,
+    HASH_SEEK_TO => 4,
 };
 
 # Node and hash Iteration
@@ -64,10 +65,18 @@ sub _mk_iter {
 *rev_iter = _mk_iter(qw/max predecessor/);
 *seek     = _mk_iter(qw/get successor/);
 
+sub hseek {
+    my $self = shift; 
+    my $key  = shift;
+    $self->[HASH_SEEK_TO] = $key;
+} 
+
 sub FIRSTKEY {
     my $self = shift; 
 
-    $self->[HASH_ITER] = $self->iter;
+    $self->[HASH_ITER] = defined $self->[HASH_SEEK_TO]
+      ? $self->seek($self->[HASH_SEEK_TO])
+      : $self->iter;
     my $node = $self->[HASH_ITER]->next
       or return;
     return $node->[_KEY];
@@ -659,6 +668,23 @@ the node with the specified key.
 
 Seeking to a non existant key will return an iterator that traverses the tree starting at
 the minimal node i.e. as if iter() were called.
+
+=head2 hseek(KEY)
+
+For tied hashes, determines the next entry to be returned by each.
+
+    tie my %capital, 'Tree::RB';
+
+    $capital{'France'}  = 'Paris';
+    $capital{'England'} = 'London';
+    $capital{'Hungary'} = 'Budapest';
+    $capital{'Ireland'} = 'Dublin';
+    $capital{'Egypt'}   = 'Cairo';
+    $capital{'Germany'} = 'Berlin';
+    tied(%capital)->hseek('Germany');
+
+    ($key, $val) = each %capital;
+    print "$key, $val"; # -> Germany, Berlin 
 
 =head2 put(KEY, VALUE)
 

@@ -1,4 +1,4 @@
-use Test::More tests => 24;
+use Test::More tests => 27;
 use strict;
 use warnings;
 use Data::Dumper;
@@ -24,14 +24,8 @@ ok(keys %capital == 0, 'Size check after deleting sole element');
 isa_ok($deleted, 'Tree::RB::Node');
 ok($deleted->key eq 'France' && $deleted->val eq 'Paris', 'check deleted node');
 
-$capital{'France'} = 'Paris';
-$capital{'England'} = 'London';
-$capital{'Hungary'} = 'Budapest';
-$capital{'Ireland'} = 'Dublin';
-$capital{'Egypt'}   = 'Cairo';
-$capital{'Germany'} = 'Berlin';
-
-ok(keys %capital == 6, 'Size check (keys) after inserts');
+setup();
+ok(keys   %capital == 6, 'Size check (keys) after inserts');
 ok(scalar %capital == 6, 'Size check (scalar) after inserts');
 
 my @keys = qw/Egypt England France Germany Hungary Ireland/;
@@ -74,12 +68,22 @@ ok(@$tied == 0, 'underlying array is empty after untie');
 $tied = tie(%capital, 'Tree::RB', sub { $_[1] cmp $_[0] });
 
 isa_ok($tied, 'Tree::RB');
-
-$capital{'France'}  = 'Paris';
-$capital{'England'} = 'London';
-$capital{'Hungary'} = 'Budapest';
-$capital{'Ireland'} = 'Dublin';
-$capital{'Egypt'}   = 'Cairo';
-$capital{'Germany'} = 'Berlin';
+setup();
 
 is_deeply([keys %capital], [reverse @keys], 'check keys list (reverse sort)');
+
+# Seeking
+can_ok('Tree::RB', 'hseek');
+$tied->hseek('Germany');
+($key, $val) = each %capital;
+is($key, 'Germany', 'hseek check key');
+is($val, 'Berlin',  'hseek check value');
+
+sub setup {
+    $capital{'France'}  = 'Paris';
+    $capital{'England'} = 'London';
+    $capital{'Hungary'} = 'Budapest';
+    $capital{'Ireland'} = 'Dublin';
+    $capital{'Egypt'}   = 'Cairo';
+    $capital{'Germany'} = 'Berlin';
+} 
