@@ -1,4 +1,4 @@
-use Test::More tests => 29;
+use Test::More tests => 32;
 use strict;
 use warnings;
 
@@ -11,6 +11,7 @@ foreach my $m (qw[
     put 
     iter
     rev_iter
+    seek
     size
   ])
 {
@@ -92,3 +93,12 @@ Longer way to reverse
 foreach my $t (@rev_iter_tests) {
     $t->($it);
 }
+
+# seeking
+$it = $tree->seek('France');
+my $node = $it->next;
+is($node->key, 'France', 'seek check, key exists');
+
+$it = $tree->seek('Timbuktu');
+$node = $it->next;
+is($node->key, 'Egypt', 'seek check, non existant key');

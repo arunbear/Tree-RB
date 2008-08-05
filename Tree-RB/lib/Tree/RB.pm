@@ -36,13 +36,21 @@ sub _mk_iter {
     my $next_fn  = shift || 'successor';
     return sub {
         my $self = shift;
+        my $key  = shift;
         my $node;
         my $iter = sub {
             if($node) {
                 $node = $node->$next_fn;
             }
             else {
-                $node = $self->$start_fn;
+                if($start_fn eq 'get') {
+                    (undef, $node) = $self->$start_fn($key);
+                    $node ||= $self->min; # might want to do max one day, 
+                                          # but there is no reverse seek yet
+                } 
+                else {
+                    $node = $self->$start_fn;
+                }
             }
             return $node;
         };
@@ -54,6 +62,7 @@ sub _mk_iter {
 
 *iter     = _mk_iter(qw/min successor/);
 *rev_iter = _mk_iter(qw/max predecessor/);
+*seek     = _mk_iter(qw/get successor/);
 
 sub FIRSTKEY {
     my $self = shift; 
