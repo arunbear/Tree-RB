@@ -635,6 +635,31 @@ This can be used to step through the tree in reverse order.
 
 get() is an alias for lookup().
 
+=head2 iter()
+
+Returns an iterator object that can be used to traverse the tree in order.
+
+The iterator object supports a 'next' method that returns the next node in the
+tree or undef if all of the nodes have been visited.
+
+See the synopsis for an example.
+
+=head2 rev_iter()
+
+Returns an iterator object that can be used to traverse the tree in reverse order.
+
+=head2 seek(KEY)
+
+Returns an iterator object that can be used to traverse the tree in order starting from
+the node with the specified key.
+
+    $it = $tree->seek('France');
+    my $node = $it->next;
+    print $node->key; # -> 'France'
+
+Seeking to a non existant key will return an iterator that traverses the tree starting at
+the minimal node i.e. as if iter() were called.
+
 =head2 put(KEY, VALUE)
 
 Adds a new node to the tree. 
