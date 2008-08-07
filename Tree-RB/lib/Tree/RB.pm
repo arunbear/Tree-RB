@@ -44,10 +44,12 @@ sub _mk_iter {
                 $node = $node->$next_fn;
             }
             else {
-                if($start_fn eq 'get') {
-                    (undef, $node) = $self->$start_fn($key);
-                    $node ||= $self->min; # might want to do max one day, 
-                                          # but there is no reverse seek yet
+                if(defined $key) {
+                    # seek to $key
+                    (undef, $node) = $self->lookup(
+                        $key, 
+                        $next_fn eq 'successor' ? LUGTEQ : LULTEQ
+                    );
                 } 
                 else {
                     $node = $self->$start_fn;
@@ -190,7 +192,8 @@ sub lookup {
             return wantarray ? ($y->[_VAL], $y) : $y->[_VAL];
         }
         else {
-            my $next = $y->successor;
+            my $next = $y->successor
+              or return;
             return wantarray ? ($next->[_VAL], $next) : $next->[_VAL];
         }
     }
@@ -199,7 +202,8 @@ sub lookup {
             return wantarray ? ($y->[_VAL], $y) : $y->[_VAL];
         }
         else {
-            my $next = $y->predecessor;
+            my $next = $y->predecessor
+              or return;
             return wantarray ? ($next->[_VAL], $next) : $next->[_VAL];
         }
     }
