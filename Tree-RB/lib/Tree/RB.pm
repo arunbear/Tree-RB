@@ -27,7 +27,7 @@ use constant {
     CMP   => 1,
     SIZE  => 2,
     HASH_ITER => 3,
-    HASH_SEEK_TO => 4,
+    HASH_SEEK_ARG => 4,
 };
 
 # Node and hash Iteration
@@ -65,20 +65,41 @@ sub _mk_iter {
 
 *iter     = _mk_iter(qw/min successor/);
 *rev_iter = _mk_iter(qw/max predecessor/);
-*seek     = _mk_iter(qw/get successor/);
 
 sub hseek {
     my $self = shift; 
-    my $key  = shift;
-    $self->[HASH_SEEK_TO] = $key;
+    my $arg  = shift;
+    defined $arg or croak("Can't seek to an undefined key");
+    my %args;
+    if(ref $arg eq 'HASH') {
+        %args = %$arg;
+    } 
+    else {
+        $args{-key} = $arg;
+    }
+    
+    if(@_ && exists $args{-key}) {
+        my $arg = shift;
+        if(ref $arg eq 'HASH') {
+            %args = (%$arg, %args);
+        } 
+    } 
+    if(! exists $args{-key}) {
+        defined $args{'-reverse'} or croak("Expected option '-reverse' is undefined");
+    }
+    $self->[HASH_SEEK_ARG] = \%args;
 } 
 
 sub FIRSTKEY {
     my $self = shift; 
 
-    $self->[HASH_ITER] = defined $self->[HASH_SEEK_TO]
-      ? $self->seek($self->[HASH_SEEK_TO])
-      : $self->iter;
+    if($self->[HASH_SEEK_ARG]) {
+        my $iter = ($self->[HASH_SEEK_ARG]{'-reverse'} ? 'rev_iter' : 'iter');
+        $self->[HASH_ITER] = $self->$iter($self->[HASH_SEEK_ARG]{'-key'});
+    } 
+    else {
+        $self->[HASH_ITER] = $self->iter;
+    }
     my $node = $self->[HASH_ITER]->next
       or return;
     return $node->[_KEY];
