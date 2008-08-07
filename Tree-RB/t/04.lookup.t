@@ -1,6 +1,7 @@
-use Test::More tests => 9;
+use Test::More tests => 10;
 use strict;
 use warnings;
+use Data::Dumper;
 
 use Tree::RB qw[LUEQUAL LUGTEQ LULTEQ LUGREAT LULESS LUNEXT LUPREV];
 
@@ -28,18 +29,25 @@ $tree->put('Germany' => 'Berlin');
 #  <*> <*>        <*> <*>     <*> <*>
 
 my $val;
+my $node;
 $val = $tree->lookup('Germany');
 is($val, 'Berlin', 'lookup');
 $val = $tree->lookup('Belgium', LUGTEQ);
-#use Data::Dumper;
-#print Dumper($val)."\n";
 is($val, 'Cairo', 'lookup LUGTEQ: left');
 
 $val = $tree->lookup('Finland', LUGTEQ);
 is($val, 'Paris', 'lookup LUGTEQ: right');
 
+($val, $node) = $tree->lookup('Russia', LUGTEQ);
+is_deeply($node, undef, 'lookup LUGTEQ: no gt node')
+  or diag('got: '. Dumper($node));
+
 is('Budapest', $tree->lookup('Hungary', LULTEQ), 'lookup LULTEQ: node exists');
-ok(!defined $tree->lookup('Belgium', LULTEQ), 'lookup LULTEQ: no lt node');
+
+($val, $node) = $tree->lookup('Belgium', LULTEQ);
+is_deeply($node, undef, 'lookup LULTEQ: no lt node')
+  or diag('got: '. Dumper($node));
+
 is($tree->lookup('Jamaica', LULTEQ), 'Dublin', 'lookup LULTEQ: right');
 is($tree->lookup('Iceland', LULTEQ), 'Budapest', 'lookup LULTEQ: left');
 

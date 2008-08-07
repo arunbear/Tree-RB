@@ -1,6 +1,7 @@
-use Test::More tests => 32;
+use Test::More tests => 36;
 use strict;
 use warnings;
+use Data::Dumper;
 
 use_ok( 'Tree::RB' );
 
@@ -11,7 +12,6 @@ foreach my $m (qw[
     put 
     iter
     rev_iter
-    seek
     size
   ])
 {
@@ -95,10 +95,33 @@ foreach my $t (@rev_iter_tests) {
 }
 
 # seeking
-$it = $tree->seek('France');
-my $node = $it->next;
+my $node;
+$it = $tree->iter('France');
+$node = $it->next;
 is($node->key, 'France', 'seek check, key exists');
 
-$it = $tree->seek('Timbuktu');
+$it = $tree->iter('Iceland');
 $node = $it->next;
-is($node->key, 'Egypt', 'seek check, non existant key');
+is($node->key, 'Ireland', 'seek check, key does not exist but is lt max key');
+
+$it = $tree->iter('Timbuktu');
+$node = $it->next;
+ok(!defined $node, 'seek check, non existant key gt all keys')
+  or diag(Dumper($node));
+
+# seeking in reverse
+$it = $tree->rev_iter('Hungary');
+$node = $it->next;
+is($node->key, 'Hungary', 'reverse seek check, key exists');
+$node = $it->next;
+is($node->key, 'Germany', 'reverse seek check, next key lt this one');
+
+$it = $tree->rev_iter('Finland');
+$node = $it->next;
+is($node->key, 'England', 'reverse seek check, key does not exist but is gt min key');
+
+$it = $tree->rev_iter('Albania');
+$node = $it->next;
+ok(!defined $node, 'reverse seek check, non existant key lt all keys');
+
+__END__ 
