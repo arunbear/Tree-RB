@@ -4,24 +4,27 @@ use strict;
 use Carp;
 use vars qw( $VERSION @EXPORT );
 
-$VERSION = '0.2';
+$VERSION = '0.3';
 
 require Exporter;
 *import = \&Exporter::import;
 
-@EXPORT = qw[_PARENT _LEFT _RIGHT _COLOR _KEY _VAL RED BLACK];
+my @Node_slots;
+BEGIN { @Node_slots = qw(PARENT LEFT RIGHT COLOR KEY VAL); }
+@EXPORT = (qw[RED BLACK], map {"_$_"} @Node_slots);
 
-use constant {
-    _KEY    => 0,
-    _VAL    => 1,
-    _COLOR  => 2,
-    _PARENT => 3,
-    _LEFT   => 4,
-    _RIGHT  => 5,
-    BLACK   => 1,
-    RED     => 2,
+use enum @Node_slots;
+use enum qw{
+    BLACK
+    RED
 };
 
+# enum doesn't allow symbols to start with "_", but we want them 
+foreach my $s (@Node_slots) {
+    no strict 'refs';
+    *{"_$s"} = \&$s;
+    delete $Tree::RB::Node::_Constants::{$s};
+} 
 
 1; # Magic true value required at end of module
 __END__
@@ -48,7 +51,7 @@ This module exists solely to provide contants for use by Tree::RB and Tree::RB::
 
 =head1 DEPENDENCIES
 
-None.
+L<enum>
 
 
 =head1 INCOMPATIBILITIES
@@ -57,8 +60,6 @@ None reported.
 
 
 =head1 BUGS AND LIMITATIONS
-
-No bugs have been reported.
 
 Please report any bugs or feature requests to
 C<bug-tree-rb-node-_fields@rt.cpan.org>, or through the web interface at
