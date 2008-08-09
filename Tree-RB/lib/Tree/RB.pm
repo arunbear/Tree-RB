@@ -185,7 +185,9 @@ sub max {
 
 sub lookup {
     my $self = shift;
-    my $key  = shift or croak('Missing arg: $key');
+    my $key  = shift;
+    defined $key
+      or croak("Can't use undefined value as key");
     my $mode = shift || LUEQUAL;
     my $cmp = $self->[CMP];
 
@@ -251,11 +253,11 @@ sub EXISTS {
 
 sub put {
     my $self = shift;
-    my $key_or_node = shift or croak('key or node required');
+    my $key_or_node = shift;
+    defined $key_or_node
+      or croak("Can't use undefined value as key or node");
     my $val = shift;
-    if(!$val && ref $key_or_node ne 'Tree::RB::Node') {
-        croak('value required');
-    }
+
     my $cmp = $self->[CMP];
     my $z = (ref $key_or_node eq 'Tree::RB::Node')
               ? $key_or_node
@@ -339,8 +341,10 @@ sub _fix_after_insertion {
 }
 
 sub delete {
-    my $self = shift;
-    my $key_or_node = shift or croak('key or node required');
+    my ($self, $key_or_node) = @_;
+    defined $key_or_node
+      or croak("Can't use undefined value as key or node");
+
     my $z = (ref $key_or_node eq 'Tree::RB::Node')
               ? $key_or_node
               : ($self->lookup($key_or_node))[1];
