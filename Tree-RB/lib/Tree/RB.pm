@@ -6,28 +6,29 @@ use Carp;
 use Tree::RB::Node qw[set_color color_of parent_of left_of right_of];
 use Tree::RB::Node::_Constants;
 use vars qw( $VERSION @EXPORT_OK );
-$VERSION = '0.2';
+$VERSION = '0.3';
 
 require Exporter;
 *import    = \&Exporter::import;
 @EXPORT_OK = qw[LUEQUAL LUGTEQ LULTEQ LUGREAT LULESS LUNEXT LUPREV];
 
-use Data::Dumper;
-use constant {
-    LUEQUAL => 0,
-    LUGTEQ  => 1,
-    LULTEQ  => 2,
-    LUGREAT => 4,
-    LULESS  => 5,
-    LUNEXT  => 6,
-    LUPREV  => 7,
+use enum qw{
+    LUEQUAL
+    LUGTEQ 
+    LULTEQ 
+    LUGREAT
+    LULESS 
+    LUNEXT 
+    LUPREV 
 };
-use constant {
-    ROOT  => 0,
-    CMP   => 1,
-    SIZE  => 2,
-    HASH_ITER => 3,
-    HASH_SEEK_ARG => 4,
+
+# object slots
+use enum qw{
+    ROOT
+    CMP 
+    SIZE
+    HASH_ITER
+    HASH_SEEK_ARG
 };
 
 # Node and hash Iteration
@@ -677,7 +678,7 @@ This can be used to step through the tree in reverse order.
 
 get() is an alias for lookup().
 
-=head2 iter()
+=head2 iter([KEY])
 
 Returns an iterator object that can be used to traverse the tree in order.
 
@@ -686,23 +687,25 @@ tree or undef if all of the nodes have been visited.
 
 See the synopsis for an example.
 
-=head2 rev_iter()
+If a key is supplied, the iterator returned will traverse the tree in order starting from
+the node with key greater than or equal to the specified key.
 
-Returns an iterator object that can be used to traverse the tree in reverse order.
-
-=head2 seek(KEY)
-
-Returns an iterator object that can be used to traverse the tree in order starting from
-the node with the specified key.
-
-    $it = $tree->seek('France');
+    $it = $tree->iter('France');
     my $node = $it->next;
     print $node->key; # -> 'France'
 
-Seeking to a non existant key will return an iterator that traverses the tree starting at
-the minimal node i.e. as if iter() were called.
+=head2 rev_iter([KEY])
 
-=head2 hseek(KEY)
+Returns an iterator object that can be used to traverse the tree in reverse order.
+
+If a key is supplied, the iterator returned will traverse the tree in order starting from
+the node with key less than or equal to the specified key.
+
+    $it = $tree->rev_iter('France');
+    my $node = $it->next;
+    print $node->key; # -> 'England'
+
+=head2 hseek(KEY, [{-reverse => 1|0}])
 
 For tied hashes, determines the next entry to be returned by each.
 
@@ -718,6 +721,18 @@ For tied hashes, determines the next entry to be returned by each.
 
     ($key, $val) = each %capital;
     print "$key, $val"; # -> Germany, Berlin 
+
+The direction of iteration can be reversed by passing a hashref with key '-reverse' and value 1
+to hseek after or instead of KEY, e.g. to iterate over the hash in reverse order:
+
+    tied(%capital)->hseek({-reverse => 1});
+    $key = each %capital;
+    print $key; # -> Ireland 
+
+The following calls are equivalent
+
+    tied(%capital)->hseek('Germany', {-reverse => 1});
+    tied(%capital)->hseek({-key => 'Germany', -reverse => 1});
 
 =head2 put(KEY, VALUE)
 
@@ -736,7 +751,7 @@ deleted from the tree and returned, otherwise C<undef> is returned.
 
 =head1 DEPENDENCIES
 
-None.
+L<enum>
 
 
 =head1 INCOMPATIBILITIES
@@ -745,8 +760,6 @@ None reported.
 
 
 =head1 BUGS AND LIMITATIONS
-
-No bugs have been reported.
 
 Please report any bugs or feature requests to
 C<bug-tree-rb@rt.cpan.org>, or through the web interface at
