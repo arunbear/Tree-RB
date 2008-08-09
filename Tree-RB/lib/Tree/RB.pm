@@ -88,11 +88,13 @@ sub hseek {
         defined $args{'-reverse'} or croak("Expected option '-reverse' is undefined");
     }
     $self->[HASH_SEEK_ARG] = \%args;
+    if($self->[HASH_ITER]) {
+        $self->_reset_hash_iter;
+    } 
 } 
 
-sub FIRSTKEY {
+sub _reset_hash_iter {
     my $self = shift; 
-
     if($self->[HASH_SEEK_ARG]) {
         my $iter = ($self->[HASH_SEEK_ARG]{'-reverse'} ? 'rev_iter' : 'iter');
         $self->[HASH_ITER] = $self->$iter($self->[HASH_SEEK_ARG]{'-key'});
@@ -100,6 +102,12 @@ sub FIRSTKEY {
     else {
         $self->[HASH_ITER] = $self->iter;
     }
+} 
+
+sub FIRSTKEY {
+    my $self = shift; 
+    $self->_reset_hash_iter;
+
     my $node = $self->[HASH_ITER]->next
       or return;
     return $node->[_KEY];
