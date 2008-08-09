@@ -10,14 +10,17 @@ require Exporter;
 *import = \&Exporter::import;
 
 my @Node_slots;
-BEGIN { @Node_slots = qw(PARENT LEFT RIGHT COLOR KEY VAL); }
-@EXPORT = (qw[RED BLACK], map {"_$_"} @Node_slots);
+my @Node_colors;
 
+BEGIN { 
+    @Node_slots  = qw(PARENT LEFT RIGHT COLOR KEY VAL); 
+    @Node_colors = qw(RED BLACK);
+}
+
+@EXPORT = (@Node_colors, map {"_$_"} @Node_slots);
+
+use enum @Node_colors;
 use enum @Node_slots;
-use enum qw{
-    BLACK
-    RED
-};
 
 # enum doesn't allow symbols to start with "_", but we want them 
 foreach my $s (@Node_slots) {
