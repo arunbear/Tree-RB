@@ -96,7 +96,7 @@ $tied->hseek('Iceland');
 $key = each %capital;
 is($key, 'Ireland', 'hseek to non existent key lt max key');
 
-$tied->hseek('Belgium');
+$tied->hseek({-key=> 'Belgium'});
 $key = each %capital;
 is($key, 'Egypt', 'hseek to key lt min key');
 
