@@ -255,12 +255,12 @@ left to right search.
 =head2 successor()
 
 Returns the node with the smallest key larger than this node's key,
-or this node if it is the node with the maximal key.
+or C<undef> if it is the node with the maximal key.
 
 =head2 predecessor()
 
 Returns the node with the greatest key smaller than this node's key,
-or this node if it is the node with the minimal key.
+or C<undef> if it is the node with the minimal key.
 
 =head2 as_lol([NODE])
 
