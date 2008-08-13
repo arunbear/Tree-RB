@@ -127,10 +127,12 @@ is($key, 'Ireland', 'reverse hseek to non existing key gt max');
 ## Helper Functions 
 
 sub setup {
-    $capital{'France'}  = 'Paris';
-    $capital{'England'} = 'London';
-    $capital{'Hungary'} = 'Budapest';
-    $capital{'Ireland'} = 'Dublin';
-    $capital{'Egypt'}   = 'Cairo';
-    $capital{'Germany'} = 'Berlin';
+    %capital = (
+        France => 'Paris',
+        England => 'London',
+        Hungary => 'Budapest',
+        Ireland => 'Dublin',
+        Egypt => 'Cairo',
+        Germany => 'Berlin',
+    );
 } 
