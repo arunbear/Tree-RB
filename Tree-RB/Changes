@@ -1,5 +1,9 @@
 Revision history for Tree-RB
 
+0.4  13 August  2008 10:15
+     No code changes, just fixed Build.PL to include dependency on enum.
+     Happy birthday Jyothi!
+
 0.3  09 August  2008 19:47
      Tree iteration is now seekable.
      Hash iteration is now seekable and reversible.
