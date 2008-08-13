@@ -9,6 +9,7 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/Tree/RB.pm',
     requires => {
         'Test::More' => 0,
+        'enum'       => 0,
     },
     add_to_cleanup      => [ 'Tree-RB-*' ],
 );
