@@ -42,7 +42,7 @@ sub new {
 
     if (@_) {
         $obj->[_KEY] = shift;
-        $obj->[_VAL] = shift or croak("Missing value in new()");
+        $obj->[_VAL] = shift;
     }
     return bless $obj, $class;
 }
