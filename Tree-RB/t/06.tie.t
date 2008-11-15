@@ -26,7 +26,11 @@ ok($deleted->key eq 'France' && $deleted->val eq 'Paris', 'check deleted node');
 
 setup();
 ok(keys   %capital == 6, 'Size check (keys) after inserts');
-ok(scalar %capital == 6, 'Size check (scalar) after inserts');
+
+SKIP: {
+    skip "tied hash SCALAR method not available in version $]", 1 if $] < 5.008_003;
+    ok(scalar %capital == 6, 'Size check (scalar) after inserts');
+}
 
 my @keys = qw/Egypt England France Germany Hungary Ireland/;
 is_deeply([keys %capital], \@keys, 'check keys list');
