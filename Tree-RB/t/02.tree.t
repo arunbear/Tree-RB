@@ -1,4 +1,4 @@
-use Test::More tests => 36;
+use Test::More tests => 37;
 use strict;
 use warnings;
 use Data::Dumper;
@@ -124,4 +124,6 @@ $it = $tree->rev_iter('Albania');
 $node = $it->next;
 ok(!defined $node, 'reverse seek check, non existant key lt all keys');
 
+$tree->put('Timbuktu' => '');
+is($tree->get('Timbuktu'), '', 'False values can be stored');
 __END__ 
