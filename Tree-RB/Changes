@@ -1,5 +1,9 @@
 Revision history for Tree-RB
 
+0.500_001  10 June  2009
+     Changes in distribution packaging to include repository URL
+     No code changes.
+
 0.5  15 November  2008 16:43
      Allow false values to be stored (thanks to Anton Petrusevich for pointing out the problem).
      Skip test of tied hash SCALAR method if we're not running at least 5.8.3
