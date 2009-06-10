@@ -1,7 +1,6 @@
 Build.PL
 Changes
 MANIFEST
-Makefile.PL
 README
 lib/Tree/RB.pm
 lib/Tree/RB/Node.pm
