@@ -1,5 +1,9 @@
 Revision history for Tree-RB
 
+0.500_002  15 July  2009
+     Fixed http://rt.cpan.org/Public/Bug/Display.html?id=47894
+     Moved to Module::Install
+
 0.500_001  10 June  2009
      Changes in distribution packaging to include repository URL
      No code changes.
