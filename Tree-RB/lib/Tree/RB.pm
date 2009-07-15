@@ -192,7 +192,8 @@ sub lookup {
     my $cmp = $self->[CMP];
 
     my $y;
-    my $x = $self->[ROOT];
+    my $x = $self->[ROOT]
+      or return;
     my $next_child;
     while($x) {
         $y = $x;
