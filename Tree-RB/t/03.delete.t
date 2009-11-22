@@ -1,4 +1,4 @@
-use Test::More tests => 7;
+use Test::More tests => 13;
 use strict;
 use warnings;
 
@@ -39,6 +39,12 @@ $tree->put('Egypt' => 'Cairo');
 #   |   |              |   |
 #  <*> <*>            <*> <*>
 
+is($tree->delete('Hungary')->key, 'Hungary', 'delete intermediate node');
+$tree->put('Hungary' => 'Budapest');
+
+is($tree->delete('England')->key, 'England', 'delete intermediate node');
+$tree->put('England' => 'London');
+
 $tree->delete('Egypt');
 is($tree->min->key,  'England', q[new min after deleting current min]);
 is($tree->max->key,  'Ireland', q[max not changed after deleting current min]);
@@ -67,3 +73,8 @@ is($tree->min->key,  'England', q[min not changed after deleting current max]);
 #    /---\       /---\
 #    |   |       |   |
 #   <*> <*>     <*> <*>
+
+is($tree->delete('France')->key, 'France', 'delete node with two kids');
+is($tree->root->key,  'Hungary', q[new root]);
+is($tree->max->key,  'Hungary', q[max not changed]);
+is($tree->min->key,  'England', q[min not changed]);

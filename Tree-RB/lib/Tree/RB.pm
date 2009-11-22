@@ -6,7 +6,7 @@ use Carp;
 use Tree::RB::Node qw[set_color color_of parent_of left_of right_of];
 use Tree::RB::Node::_Constants;
 use vars qw( $VERSION @EXPORT_OK );
-$VERSION = 0.500_002;
+$VERSION = 0.500_003;
 
 require Exporter;
 *import    = \&Exporter::import;
@@ -351,9 +351,27 @@ sub delete {
               : ($self->lookup($key_or_node))[1];
     return unless $z;
 
-    my $y = ($z->[_LEFT] && $z->[_RIGHT])
-              ? $z->successor
-              : $z;
+    my $y;
+    if($z->[_LEFT] && $z->[_RIGHT]) {
+        # (Notes kindly provided by Christopher Gurnee)
+        # When deleting a node 'z' which has two children from a binary search tree, the
+        # typical algorithm is to delete the successor node 'y' instead (which is
+        # guaranteed to have at most one child), and then to overwrite the key/values of
+        # node 'z' (which is still in the tree) with the key/values (which we don't want
+        # to lose) from the now-deleted successor node 'y'.
+
+        # Since we need to return the deleted item, it's not good enough to overwrite the
+        # key/values of node 'z' with those of node 'y'. Instead we swap them so we can
+        # return the deleted values.
+
+        $y = $z->successor;
+        ($z->[_KEY], $y->[_KEY]) = ($y->[_KEY], $z->[_KEY]);
+        ($z->[_VAL], $y->[_VAL]) = ($y->[_VAL], $z->[_VAL]);
+    }
+    else {
+        $y = $z;
+    }
+
     # splice out $y
     my $x = $y->[_LEFT] || $y->[_RIGHT];
     if(defined $x) {
@@ -777,6 +795,10 @@ Arun Prasad  C<< <arunbear@cpan.org> >>
 
 Some documentation has been borrowed from Benjamin Holzman's L<Tree::RedBlack>
 and Damian Ivereigh's libredblack (L<http://libredblack.sourceforge.net/>).
+
+=head1 ACKNOWLEDGEMENTS
+
+Thanks for bug reports go to Anton Petrusevich, Wes Thompson and Christopher Gurnee.
 
 =head1 LICENCE AND COPYRIGHT
 

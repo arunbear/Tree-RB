@@ -322,8 +322,6 @@ None reported.
 
 =head1 BUGS AND LIMITATIONS
 
-No bugs have been reported.
-
 Please report any bugs or feature requests to
 C<bug-tree-rb-node@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.

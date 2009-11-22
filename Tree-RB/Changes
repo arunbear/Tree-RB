@@ -1,5 +1,8 @@
 Revision history for Tree-RB
 
+0.500_003  22 November  2009
+     Fixed http://rt.cpan.org/Public/Bug/Display.html?id=49078
+
 0.500_002  15 July  2009
      Fixed http://rt.cpan.org/Public/Bug/Display.html?id=47894
      Moved to Module::Install
