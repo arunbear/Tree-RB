@@ -726,6 +726,10 @@ the node with key less than or equal to the specified key.
 
     $it = $tree->rev_iter('France');
     my $node = $it->next;
+    print $node->key; # -> 'France'
+
+    $it = $tree->rev_iter('Finland');
+    my $node = $it->next;
     print $node->key; # -> 'England'
 
 =head2 hseek(KEY, [{-reverse => 1|0}])
