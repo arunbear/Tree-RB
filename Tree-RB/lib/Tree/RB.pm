@@ -6,7 +6,7 @@ use Carp;
 use Tree::RB::Node qw[set_color color_of parent_of left_of right_of];
 use Tree::RB::Node::_Constants;
 use vars qw( $VERSION @EXPORT_OK );
-$VERSION = 0.500_003;
+$VERSION = 0.500_004;
 
 require Exporter;
 *import    = \&Exporter::import;
@@ -521,7 +521,7 @@ Tree::RB - Perl implementation of the Red/Black tree, a type of balanced binary 
 
 =head1 VERSION
 
-This document describes Tree::RB version 0.1
+This document describes Tree::RB version 0.500004
 
 
 =head1 SYNOPSIS
@@ -536,10 +536,10 @@ This document describes Tree::RB version 0.1
     $tree->put('Egypt'   => 'Cairo');
     $tree->put('Germany' => 'Berlin');
 
-    $tree->put('Alaska' => 'Anchorage'); # D'oh!
+    $tree->put('Alaska' => 'Anchorage'); # D'oh! Alaska isn't a Country
     $tree->delete('Alaska');
 
-    print $tree->get('Ireland'); # 'Dublin'
+    print scalar $tree->get('Ireland'); # 'Dublin'
 
     print $tree->min->key; # 'Egypt' 
     print $tree->max->key; # 'Ireland' 
@@ -549,14 +549,14 @@ This document describes Tree::RB version 0.1
     my $it = $tree->iter;
 
     while(my $node = $it->next) {
-        sprintf "key = %s, value = %s\n", $node->key, $node->val;
+        printf "key = %s, value = %s\n", $node->key, $node->val;
     }
 
     # print items in reverse order
     $it = $tree->rev_iter;
 
     while(my $node = $it->next) {
-        sprintf "key = %s, value = %s\n", $node->key, $node->val;
+        printf "key = %s, value = %s\n", $node->key, $node->val;
     }
 
     # Hash interface
@@ -608,7 +608,7 @@ For example, to get a case insensitive ordering
     my $it = $tree->iter;
 
     while(my $node = $it->next) {
-        sprintf "key = %s, value = %s\n", $node->key, $node->val;
+        printf "key = %s, value = %s\n", $node->key, $node->val;
     }
 
 =head2 resort(CODEREF)
@@ -788,10 +788,8 @@ None reported.
 
 =head1 BUGS AND LIMITATIONS
 
-Please report any bugs or feature requests to
-C<bug-tree-rb@rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org>.
-
+Please report any bugs or feature requests via the GitHub web interface at 
+L<https://github.com/arunbear/perl5-scalar-constant/issues>.
 
 =head1 AUTHOR
 
@@ -802,7 +800,7 @@ and Damian Ivereigh's libredblack (L<http://libredblack.sourceforge.net/>).
 
 =head1 ACKNOWLEDGEMENTS
 
-Thanks for bug reports go to Anton Petrusevich, Wes Thompson and Christopher Gurnee.
+Thanks for bug reports go to Anton Petrusevich, Wes Thompson, Petre Mierlutiu, Tomer Vromen and Christopher Gurnee.
 
 =head1 LICENCE AND COPYRIGHT
 
