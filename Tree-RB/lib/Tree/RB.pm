@@ -6,7 +6,8 @@ use Carp;
 use Tree::RB::Node qw[set_color color_of parent_of left_of right_of];
 use Tree::RB::Node::_Constants;
 use vars qw( $VERSION @EXPORT_OK );
-$VERSION = 0.500_004;
+$VERSION = '0.500_005';
+$VERSION = eval $VERSION;
 
 require Exporter;
 *import    = \&Exporter::import;
@@ -245,6 +246,38 @@ sub lookup {
 
 *FETCH = \&lookup;
 *get   = \&lookup;
+
+sub nth {
+    my ($self, $i) = @_;
+
+    $i =~ /^-?\d+$/
+      or croak('Integer index expected');
+    if ($i < 0) {
+        $i += $self->[SIZE];
+    }
+    if ($i < 0 || $i >= $self->[SIZE]) {
+        return;
+    }
+
+    my ($node, $next, $moves);
+    if ($i > $self->[SIZE] / 2) {
+        $node = $self->max;
+        $next = 'predecessor';
+        $moves = $self->[SIZE] - $i - 1;
+    }
+    else {
+        $node = $self->min;
+        $next = 'successor';
+        $moves = $i;
+    }
+
+    my $count = 0;
+    while ($count != $moves) {
+        $node = $node->$next;
+        ++$count;
+    }
+    return $node;
+}
 
 sub EXISTS {
     my $self = shift;
@@ -519,11 +552,6 @@ __END__
 Tree::RB - Perl implementation of the Red/Black tree, a type of balanced binary search tree. 
 
 
-=head1 VERSION
-
-This document describes Tree::RB version 0.500004
-
-
 =head1 SYNOPSIS
 
     use Tree::RB;
@@ -541,9 +569,12 @@ This document describes Tree::RB version 0.500004
 
     print scalar $tree->get('Ireland'); # 'Dublin'
 
+    print $tree->size; # 6
     print $tree->min->key; # 'Egypt' 
     print $tree->max->key; # 'Ireland' 
-    print $tree->size; # 6
+
+    print $tree->nth(0)->key;  # 'Egypt' 
+    print $tree->nth(-1)->key; # 'Ireland' 
 
     # print items, ordered by key
     my $it = $tree->iter;
@@ -583,7 +614,7 @@ This is a Perl implementation of the Red/Black tree, a type of balanced binary s
 
 A tied hash interface is also provided to allow ordered hashes to be used.
 
-See the Wikipedia article at L<http://en.wikipedia.org/wiki/Red-black_tree> for more on Red/Black trees.
+See the Wikipedia article at L<http://en.wikipedia.org/wiki/Red-black_tree> for further information about Red/Black trees.
 
 
 =head1 INTERFACE
@@ -636,6 +667,10 @@ Returns the node with the minimal key.
 
 Returns the node with the maximal key.
 
+=head2 nth(INDEX)
+
+Returns the node at the given (zero based) index, or undef if there is no node at that index. Negative indexes can be used, with -1 indicating the last node, -2 the penultimate node and so on.
+
 =head2 lookup(KEY, [MODE])
 
 When called in scalar context, lookup(KEY) returns the value
@@ -657,7 +692,7 @@ Tree::RB
 
 =item LUEQUAL
 
-Returns node exactly matching the key.
+This is the default mode. Returns the node exactly matching the key, or C<undef> if not found. 
 
 =item LUGTEQ
 
@@ -789,7 +824,7 @@ None reported.
 =head1 BUGS AND LIMITATIONS
 
 Please report any bugs or feature requests via the GitHub web interface at 
-L<https://github.com/arunbear/perl5-scalar-constant/issues>.
+L<https://github.com/arunbear/perl5-red-black-tree/issues>.
 
 =head1 AUTHOR
 

@@ -1,4 +1,4 @@
-use Test::More tests => 10;
+use Test::More tests => 18;
 use strict;
 use warnings;
 use Data::Dumper;
@@ -54,3 +54,12 @@ is($tree->lookup('Iceland', LULTEQ), 'Budapest', 'lookup LULTEQ: left');
 is($tree->lookup('Belgium', LUGREAT), 'Cairo', 'lookup LUGREAT: left');
 is($tree->lookup('Finland', LUGREAT), 'Paris', 'lookup LUGREAT: right');
 
+is $tree->nth(0)->key => 'Egypt',   'nth: 0';
+is $tree->nth(1)->key => 'England', 'nth: 1';
+is $tree->nth(4)->key => 'Hungary', 'nth: 4';
+is $tree->nth(5)->key => 'Ireland', 'nth: 5';
+
+is $tree->nth(-6)->key => 'Egypt',   'nth: -6';
+is $tree->nth(-5)->key => 'England', 'nth: -5';
+is $tree->nth(-2)->key => 'Hungary', 'nth: -2';
+is $tree->nth(-1)->key => 'Ireland', 'nth: -1';
