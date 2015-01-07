@@ -6,7 +6,7 @@ use Carp;
 use Tree::RB::Node qw[set_color color_of parent_of left_of right_of];
 use Tree::RB::Node::_Constants;
 use vars qw( $VERSION @EXPORT_OK );
-$VERSION = '0.500_005';
+$VERSION = '0.500005';
 $VERSION = eval $VERSION;
 
 require Exporter;

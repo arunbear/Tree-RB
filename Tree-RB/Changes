@@ -1,5 +1,8 @@
 Revision history for Tree-RB
 
+0.500005  07 January  2014
+    Changed version format to not be a dev release.
+
 0.500_005  07 January  2014
     Added nth() method.
     Fixed issue tracker link.
