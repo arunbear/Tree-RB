@@ -1,5 +1,9 @@
 Revision history for Tree-RB
 
+0.500_005  07 January  2014
+    Added nth() method.
+    Fixed issue tracker link.
+
 0.500_004  15 September  2013
      Documentation fixes:
        http://rt.cpan.org/Public/Bug/Display.html?id=56453
