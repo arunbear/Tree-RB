@@ -277,7 +277,7 @@ and Damian Ivereigh's libredblack ([http://libredblack.sourceforge.net/](http://
 
 # ACKNOWLEDGEMENTS
 
-Thanks for bug reports go to Anton Petrusevich, Wes Thompson, Petre Mierlutiu, Tomer Vromen and Christopher Gurnee.
+Thanks for bug reports go to Anton Petrusevich, Wes Thompson, Petre Mierlutiu, Tomer Vromen, Christopher Gurnee and Ole Bjorn Hessen.
 
 # LICENCE AND COPYRIGHT
 

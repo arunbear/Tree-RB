@@ -1,7 +1,7 @@
 {
-   "abstract" : "Perl implementation of the Red/Black tree, a type of balanced binary search tree. \r",
+   "abstract" : "Perl implementation of the Red/Black tree, a type of balanced binary search tree. ",
    "author" : [
-      "Arun Prasad  C<< <arunbear@cpan.org> >>\r"
+      "Arun Prasad  C<< <arunbear@cpan.org> >>"
    ],
    "dynamic_config" : 0,
    "generated_by" : "Minilla/v3.0.13, CPAN::Meta::Converter version 2.150005",
@@ -64,7 +64,7 @@
          "web" : "https://github.com/arunbear/Tree-RB"
       }
    },
-   "version" : "0.500005",
+   "version" : "0.500006",
    "x_authority" : "cpan:ARUNBEAR",
    "x_contributors" : [
       "Arun Prasaad <arun@linux-iods.site>",
