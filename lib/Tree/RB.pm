@@ -336,6 +336,7 @@ sub put {
     }
     $self->_fix_after_insertion($z);
     $self->[SIZE]++;
+    return;
 }
 
 *STORE = \&put;
@@ -835,7 +836,7 @@ and Damian Ivereigh's libredblack (L<http://libredblack.sourceforge.net/>).
 
 =head1 ACKNOWLEDGEMENTS
 
-Thanks for bug reports go to Anton Petrusevich, Wes Thompson, Petre Mierlutiu, Tomer Vromen and Christopher Gurnee.
+Thanks for bug reports go to Anton Petrusevich, Wes Thompson, Petre Mierlutiu, Tomer Vromen, Christopher Gurnee and Ole Bjorn Hessen.
 
 =head1 LICENCE AND COPYRIGHT
 
